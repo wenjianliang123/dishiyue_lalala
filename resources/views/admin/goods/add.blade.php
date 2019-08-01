@@ -1,3 +1,5 @@
+@extends('layout.common')
+@section('content')
 <!doctype html>
 <html lang="en">
 <head>
@@ -28,6 +30,13 @@
             <td><input type="number" name="goods_number" id=""></td>
         </tr>
         <tr>
+            <td>是否最新</td>
+            <td>
+                <input type="radio" name="is_new" id="" value="1">是
+                <input type="radio" name="is_new" id="" value="2">否
+            </td>
+        </tr>
+        <tr>
             <td colspan="2" align="center">
                 <input type="submit" name="" id="" value="添加商品">
             </td>
@@ -37,3 +46,4 @@
 
 </body>
 </html>
+@endsection

@@ -36,7 +36,7 @@
                     <dd><a href="">安全设置</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="">退了</a></li>
+            <li class="layui-nav-item"><a href="{{url('admin/login/loginout')}}">退了</a></li>
         </ul>
     </div>
 
@@ -47,8 +47,15 @@
                 <li class="layui-nav-item">
                     <a class="" href="javascript:;">商品管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="{{asset('admin/student/index')}}">学生列表</a></dd>
-                        <dd><a href="{{asset('admin/student/add')}}">学生添加</a></dd>
+                        <dd><a href="{{asset('admin/goods/index')}}">商品列表</a></dd>
+                        <dd><a href="{{asset('admin/goods/add')}}">商品添加</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">用户管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{asset('admin/user/index')}}">用户列表</a></dd>
+                        <dd><a href="{{asset('admin/login/register')}}">用户注册</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed">

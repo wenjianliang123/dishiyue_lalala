@@ -31,7 +31,7 @@
             <td>
                 <select name="student_class" id="">
                     @foreach($class_info as $vv)
-                        <option value="{{$vv->class_id}}" @if($v->student_class==$v->class_id) selected @endif>{{$vv->class_name}}</option>
+                        <option value="{{$vv->class_id}}" @if($v->student_class==$vv->class_id) selected @endif>{{$vv->class_name}}</option>
                     @endforeach
                 </select>
             </td>

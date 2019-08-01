@@ -22,6 +22,7 @@
             <input type="submit" value="搜索">
 </form>
     <table border="1">
+        登陆后用户名为{{Session::get('user_name')}}
         <tr>
             <td>ID</td>
             <td>学生姓名</td>

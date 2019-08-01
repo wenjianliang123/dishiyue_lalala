@@ -18,7 +18,7 @@ class loginController extends Controller
         $data=$request->except(['_token']);
 //        dd($data);
         //laravel查询构造器切换数据库并查询
-        $user_info = DB::connection('mysql_shop')->table('user')->where(['user_name'=>$data['user_name'],'user_pwd'=>$data['user_pwd']])->first();
+        $user_info = DB::connection('mysql_shop')->table('qiehuan_user')->where(['user_name'=>$data['user_name'],'user_pwd'=>$data['user_pwd']])->first();
 //        dd($user_info);
         if(isset($user_info))
         {
@@ -46,7 +46,7 @@ class loginController extends Controller
     {
         $data=$request->except(['_token','user_repwd']);
 //        dd($data);
-        $result=DB::connection('mysql_shop')->table('user')->insert($data);
+        $result=DB::connection('mysql_shop')->table('qiehuan_user')->insert($data);
 
         if($result)
         {

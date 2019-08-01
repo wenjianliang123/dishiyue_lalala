@@ -40,7 +40,12 @@ class studentController extends Controller
             'student_class.required'=>'学生班级必选',
         ]);
 
-        $res=DB::table("student")->insert($data);
+        $res=DB::table("student")->insert([
+            'student_name'=>$data['student_name'],
+            'student_sex'=>$data['student_sex'],
+            'student_class'=>$data['student_class'],
+            'create_time'=>$data['create_time'],
+        ]);
         if ($res)
         {
             echo '添加成功';
@@ -147,7 +152,12 @@ class studentController extends Controller
         $student_id=$request->get('student_id');
 //        dd($student_id);
 //        dd($data);
-        $result=DB::table("student")->where('student_id',$student_id)->update($data);
+        $result=DB::table("student")->where('student_id',$student_id)->update([
+            'student_name'=>$data['student_name'],
+            'student_sex'=>$data['student_sex'],
+            'student_class'=>$data['student_class'],
+            'create_time'=>time(),
+        ]);
         if($result)
         {
             echo "ok";
