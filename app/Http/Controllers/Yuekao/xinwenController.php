@@ -256,7 +256,7 @@ class xinwenController extends Controller
 //        dd($access_token);
         $user_detail=json_decode($user_detail,1);
 //        dd($user_detail);
-        return view('dibayue/user_detail',['data'=>$user_detail,'id'=>  $id]);
+        return view('dibayue/user_detail',['data'=>$user_detail,'id'=>$id]);
     }
 
 
