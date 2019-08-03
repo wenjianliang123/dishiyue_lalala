@@ -211,8 +211,19 @@ Route::post('/zhifubao/pay','PayController@do_pay');
  */
 Route::get('yuekao/login','Yuekao\xinwenController@login');
 Route::post('yuekao/do_login','Yuekao\xinwenController@do_login');
+
 //八月接口
 Route::post('ceshijiekou/','Yuekao\xinwenController@ceshijiekou');
+
+//八月获取——access_token、获取用户列表、获取用户信息、
+Route::get('/wechat/get_user_info','Yuekao\xinwenController@get_user_info');
+Route::get('/wechat/get_user_list','Yuekao\xinwenController@get_user_list');
+//测试八月——用户openid和subscribe foreach 入库
+Route::get('/wechat/user_list_do_add','Yuekao\xinwenController@user_list_do_add');
+//测试八月——用户信息展示
+Route::get('/wechat/user_list_zhanshi','Yuekao\xinwenController@user_list_zhanshi');
+//测试八月——用户详情
+Route::get('/wechat/user_detail/{id}','Yuekao\xinwenController@user_detail');
 
 Route::group(['middleware' => ['checkLogin_xinwen'],'prefix'=>'/yuekao/xinwen/'], function () {
     Route::get('index','Yuekao\xinwenController@index');
