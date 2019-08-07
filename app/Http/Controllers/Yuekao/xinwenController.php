@@ -127,16 +127,10 @@ class xinwenController extends Controller
 
         return view('/yuekao/xinwen_detail',['data'=>$info,'fangwen'=>$xinwen]);
     }
-    public function ceshijiekou(Request $request)
-    {
-        if(empty($request->all()['access_token'])||$request->all()['access_token']!='ACCESS_TOKEN')
-        {
-            return json_encode(['errno'=>'40014']);
-        }
-        $info =DB::table('yuekao_xinwen')->get()->toArray();
-        $info=json_decode(json_encode($info),1);
-        echo json_encode($info);
 
 
-    }
+
+
+
+
 }

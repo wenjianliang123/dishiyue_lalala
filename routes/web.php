@@ -211,8 +211,82 @@ Route::post('/zhifubao/pay','PayController@do_pay');
  */
 Route::get('yuekao/login','Yuekao\xinwenController@login');
 Route::post('yuekao/do_login','Yuekao\xinwenController@do_login');
+<<<<<<< HEAD
 //八月接口
 Route::any('ceshijiekou/','Yuekao\xinwenController@ceshijiekou');
+=======
+
+
+
+/**
+ * 八月接口
+ */
+
+
+Route::prefix('/wechat')->group(function() {
+
+    //八月接口测试
+
+    Route::any('ceshijiekou/','Jiekou\wechat_user_controller@ceshijiekou');
+
+    //八月获取——access_token、获取用户列表、获取用户信息、
+    Route::get('/get_user_info','Jiekou\wechat_user_controller@get_user_info');
+    //获取用户列表、循环入库
+    Route::get('/get_user_list','Jiekou\wechat_user_controller@get_user_list');
+
+    //测试八月——用户信息展示
+    Route::get('/user_list_zhanshi','Jiekou\wechat_user_controller@user_list_zhanshi');
+    //测试八月——用户详情
+    Route::get('/user_detail/{id}','Jiekou\wechat_user_controller@user_detail');
+    //微信授权的登录
+    Route::get('/login','Jiekou\wechat_user_controller@login');
+    //微信授权获取code
+    Route::get('/get_code','Jiekou\wechat_user_controller@get_code');
+    //获取模板id --不可用
+    Route::get('/get_moban_id','Jiekou\wechat_moban_controller@get_moban_id');
+    //获取模板列表
+    Route::get('/get_moban_list','Jiekou\wechat_moban_controller@get_moban_list');
+    //删除模板
+    Route::get('/delete_moban','Jiekou\wechat_moban_controller@delete_moban');
+    //推送模板信息
+    Route::get('/push_moban_info','Jiekou\wechat_moban_controller@push_moban_info');
+
+    //上传临时和永久的素材的视图
+    Route::get('/upload_sucai','Jiekou\wechat_upload_sucai@upload_sucai');
+    //处理临时/永久的素材
+    Route::post('/do_upload_sucai','Jiekou\wechat_upload_sucai@do_upload_sucai');
+    //获取临时图片素材
+    Route::get('/get_image_source','Jiekou\wechat_upload_sucai@get_image_source');
+    //获取临时视频素材
+    Route::get('/get_video_source','Jiekou\wechat_upload_sucai@get_video_source');
+    //获取临时音频素材
+    Route::get('/get_voice_source','Jiekou\wechat_upload_sucai@get_voice_source');
+    //获取（永久--图片）素材列表
+    Route::get('/get_yongjiu_image_sucai_list','Jiekou\wechat_upload_sucai@get_yongjiu_image_sucai_list');
+    //获取（永久--音频）素材列表
+    Route::get('/get_yongjiu_voice_sucai_list','Jiekou\wechat_upload_sucai@get_yongjiu_voice_sucai_list');
+    //获取（永久--视频）素材列表
+    Route::get('/get_yongjiu_video_sucai_list','Jiekou\wechat_upload_sucai@get_yongjiu_video_sucai_list');
+    //删除永久素材
+    Route::get('/delete_yongjiu_sucai','Jiekou\wechat_upload_sucai@delete_yongjiu_sucai');
+    //获取素材总数
+    Route::get('/get_sucai_count','Jiekou\wechat_upload_sucai@get_sucai_count');
+    //获取永久素材
+    Route::get('/get_yongjiu_sucai','Jiekou\wechat_upload_sucai@get_yongjiu_sucai');
+
+});
+/**
+ * 八月微信模板在项目后台管理
+ */
+
+Route::prefix('/admin')->group(function() {
+    //模板列表
+    Route::get('/moban_list','Admin\wechat_moban_controller@moban_list');
+    //删除模板
+    Route::post('/del_moban','Admin\wechat_moban_controller@del_moban');
+});
+
+>>>>>>> c89ce924902bac4eacb0c0aa1d39249e0ed2aeb8
 
 Route::group(['middleware' => ['checkLogin_xinwen'],'prefix'=>'/yuekao/xinwen/'], function () {
     Route::get('index','Yuekao\xinwenController@index');
