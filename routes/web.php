@@ -18,7 +18,7 @@ Route::get('/', function () {
 
 /**
  * 商品管理 图片上传
- */
+ */  
 Route::prefix('/admin/goods/')->group(function() {
     Route::get('/add','Admin\goodsController@add');
     Route::post('/do_add','Admin\goodsController@do_add');
@@ -212,7 +212,7 @@ Route::post('/zhifubao/pay','PayController@do_pay');
 Route::get('yuekao/login','Yuekao\xinwenController@login');
 Route::post('yuekao/do_login','Yuekao\xinwenController@do_login');
 //八月接口
-Route::post('ceshijiekou/','Yuekao\xinwenController@ceshijiekou');
+Route::any('ceshijiekou/','Yuekao\xinwenController@ceshijiekou');
 
 Route::group(['middleware' => ['checkLogin_xinwen'],'prefix'=>'/yuekao/xinwen/'], function () {
     Route::get('index','Yuekao\xinwenController@index');
