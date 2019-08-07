@@ -1,5 +1,6 @@
 @extends('layout.common')
 @section('content')
+    <a href="{{url('wechat/get_user_list')}}">刷新用户列表</a>
     <table border="1" align="center">
         <tr>
             <td>ID</td>

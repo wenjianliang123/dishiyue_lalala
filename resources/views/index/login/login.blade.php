@@ -17,6 +17,8 @@
                     <div class="input-field">
                         <input type="password" name="user_pwd" class="validate" placeholder="PASSWORD" required>
                     </div>
+
+                    <a href=""><p><b style="font-size:20px">第三方登录</b></p></a>
                     <a href=""><h6>Forgot Password ?</h6></a>
                     <button class="btn button-default">LOGIN</button>
                 </form>
