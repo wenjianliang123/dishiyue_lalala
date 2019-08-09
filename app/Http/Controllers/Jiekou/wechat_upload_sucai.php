@@ -134,7 +134,7 @@ class wechat_upload_sucai extends Controller
     public function get_image_source()
     {
         //拿到一个素材id
-        $media_id = '1KX5sdCtKU6sm-qhHf1bcSx0VhxJ4-H6J8tBrrEWQgWmVtj70OjDeEBA7_xOnG9-'; //图片
+        $media_id = 'XKg1l2ZQgrpjqJln6oxDR9XvFxkaHgn0Os6Ebx2UWDeYDxWr1RL8No25PZ0J-MeH'; //图片
         //接口
         $url = "https://api.weixin.qq.com/cgi-bin/media/get?access_token=".$this->wechat->get_access_token()."&media_id={$media_id}";
         //echo $url;echo '</br>';

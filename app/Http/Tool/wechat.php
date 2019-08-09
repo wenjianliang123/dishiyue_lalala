@@ -185,6 +185,18 @@ class wechat{
         unlink($path);
         return $body;
     }
+
+    //清零调用接口次数限制
+    public function empty_api_count()
+    {
+        $url="https://api.weixin.qq.com/cgi-bin/clear_quota?access_token=".$this->get_access_token();
+        $data=[
+            "appid"=>env('WECHAT_APPID')
+        ];
+        $re=$this->post($url,json_encode($data));
+        dd($re);
+
+    }
 }
 
 

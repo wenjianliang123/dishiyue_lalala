@@ -271,6 +271,29 @@ Route::prefix('/wechat')->group(function() {
     Route::get('/get_yongjiu_sucai','Jiekou\wechat_upload_sucai@get_yongjiu_sucai');
 
 });
+
+Route::prefix('/wechat/biaoqian')->group(function() {
+    //创建标签
+    Route::post('/create_biaoqian','Jiekou\wechat_biaoqian_controller@create_biaoqian');
+    //获取公众号已创建的标签
+    Route::get('/get_tag','Jiekou\wechat_biaoqian_controller@get_tag');
+    //编辑标签
+    Route::post('/edit_tag','Jiekou\wechat_biaoqian_controller@edit_tag');
+    //删除标签
+    Route::get('/delete_tag/{id}','Jiekou\wechat_biaoqian_controller@delete_tag');
+    //批量为用户打标签 batch批量
+    Route::get('/Batch_tag_users','Jiekou\wechat_biaoqian_controller@Batch_tag_users');
+    //5. 获取标签下粉丝列表
+    Route::get('/get_tag_user/{id}','Jiekou\wechat_biaoqian_controller@get_tag_user');
+    //批量为用户取消标签 a链接带两个参数
+    Route::post('/Batch_tag_user_delete','Jiekou\wechat_biaoqian_controller@Batch_tag_user_delete');
+    //获取用户身上的标签列表
+    Route::get('/get_user_tag','Jiekou\wechat_biaoqian_controller@get_user_tag');
+
+
+
+});
+
 /**
  * 八月微信模板在项目后台管理
  */
@@ -280,6 +303,23 @@ Route::prefix('/admin')->group(function() {
     Route::get('/moban_list','Admin\wechat_moban_controller@moban_list');
     //删除模板
     Route::post('/del_moban','Admin\wechat_moban_controller@del_moban');
+});
+
+/**
+ * 八月微信标签在项目后台管理
+ */
+
+Route::prefix('/admin')->group(function() {
+    //标签列表
+    Route::get('/biaoqian_list_1','Admin\biaoqian_guanli_controller@biaoqian_list');
+    //添加标签的视图
+    Route::get('/create_biaoqian_view','Admin\biaoqian_guanli_controller@create_biaoqian_view');
+    //修改标签的视图
+    Route::get('/eidt_biaoqian_view/{id}','Admin\biaoqian_guanli_controller@edit_biaoqian_view');
+
+    //获取标签下用户列表的视图
+    Route::get('get_tag_user_view/{id}','Admin\biaoqian_guanli_controller@get_tag_user_view');
+
 });
 
 
