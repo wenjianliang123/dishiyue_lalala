@@ -89,6 +89,13 @@ class biaoqian_guanli_controller extends Controller
 
     }
 
+    //根据标签群发消息
+public function Batch_send_tag_user_info_view(Request $request)
+    {
+        $tag_id=implode($request->all());
+//        dd($tag_id);
+        return view('admin/wechat_biaoqian/Batch_send_tag_user_info_view',['tag_id'=>$tag_id]);
+    }
 
 }
 

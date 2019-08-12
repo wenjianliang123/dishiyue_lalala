@@ -282,14 +282,16 @@ Route::prefix('/wechat/biaoqian')->group(function() {
     //删除标签
     Route::get('/delete_tag/{id}','Jiekou\wechat_biaoqian_controller@delete_tag');
     //批量为用户打标签 batch批量
-    Route::get('/Batch_tag_users','Jiekou\wechat_biaoqian_controller@Batch_tag_users');
+    Route::post('/Batch_tag_users','Jiekou\wechat_biaoqian_controller@Batch_tag_users');
     //5. 获取标签下粉丝列表
     Route::get('/get_tag_user/{id}','Jiekou\wechat_biaoqian_controller@get_tag_user');
     //批量为用户取消标签 a链接带两个参数
-    Route::post('/Batch_tag_user_delete','Jiekou\wechat_biaoqian_controller@Batch_tag_user_delete');
+    Route::any('/Batch_tag_user_delete','Jiekou\wechat_biaoqian_controller@Batch_tag_user_delete');
     //获取用户身上的标签列表
-    Route::get('/get_user_tag','Jiekou\wechat_biaoqian_controller@get_user_tag');
+    Route::get('/get_user_tag/{openid}','Jiekou\wechat_biaoqian_controller@get_user_tag');
 
+    //根据标签群发消息
+    Route::post('/Batch_send_tag_user_info','Jiekou\wechat_biaoqian_controller@Batch_send_tag_user_info');
 
 
 });
@@ -320,6 +322,8 @@ Route::prefix('/admin')->group(function() {
     //获取标签下用户列表的视图
     Route::get('get_tag_user_view/{id}','Admin\biaoqian_guanli_controller@get_tag_user_view');
 
+    //根据标签群发消息
+    Route::get('Batch_send_tag_user_info_view','Admin\biaoqian_guanli_controller@Batch_send_tag_user_info_view');
 });
 
 

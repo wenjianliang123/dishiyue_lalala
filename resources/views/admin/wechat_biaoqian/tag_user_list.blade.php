@@ -27,15 +27,13 @@
             <td>用户open_id</td>
         </tr>
 
-        @foreach($data['data']['openid'] as $v)
+        @foreach($data['data']['openid'] as $k=>$v)
             <tr>
                 <td>
                     <input type="checkbox" class="box" name="openid_list[]" value="{{$v}}">
                 </td>
                 <td>
-                    @for ($i = 1; $i <=$data['count']; $i++)
-                        {{ $i }}
-                    @endfor
+                    {{$k+1}}
                 </td>
                 <td>{{$v}}</td>
             </tr>
@@ -47,33 +45,12 @@
 </center>
 
 <script src="/jquery-3.3.1.js"></script>
-{{--<script>
-    $('.xiugai').click(function(){
-        _this=$(this);
-        id=_this.attr('id');
-        name=_this.attr('name');
-            alert(id);
-            alert(name);
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url:"{{url('admin/eidt_biaoqian_view')}}",
-            data:{id:id,name:name},
-            type:'post',
-            success:function(res){
-                console.log(res);
-                --}}{{--var msg = JSON.parse(res);--}}{{--
-                --}}{{--if(msg.code==1) {--}}{{--
-                    --}}{{--alert(msg.font);--}}{{--
-                    --}}{{--location.href="{{url('/admin/moban_list')}}";--}}{{--
-                --}}{{--}else{--}}{{--
-                    --}}{{--alert(msg.font);--}}{{--
-                    --}}{{--history.go(0);--}}{{--
-                --}}{{--}--}}{{--
-            }
-        });
+<script>
+    $('.all').click(function(){
+        var status = $(this).prop('checked');
+        $('.box').prop('checked',status);
     });
-</script>--}}
+
+</script>
 </body>
 </html>

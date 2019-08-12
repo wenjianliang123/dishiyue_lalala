@@ -78,23 +78,20 @@ class wechat_biaoqian_controller extends Controller
         dd($re);
     }
     //批量为用户打标签 batch批量
-    public function Batch_tag_users()
+    public function Batch_tag_users(Request $request)
     {
+        $info=$request->all();
+//        dd($info);
+        $tag_id=$info['tag_id'];
+        $open_id_info=$info['openid_list'];
+//                  dd($tag_id,$open_id_info);
         $url="https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging?access_token=".$this->wechat->get_access_token();
-        $open_id_info=DB::connection('mysql_shop')->table('wechat_openid')->select('open_id')->get()->toArray();
-        $open_id_list=[];
-//        dd($open_id_info);
-        foreach ($open_id_info as $v)
-        {
-            $open_id_list[]=$v->open_id;
-//            dump($open_id_list);
-        }
+
         //dd($open_id_list);
         $data=[
                 "openid_list"=>//粉丝列表
-                    $open_id_list
-                    ,
-                "tagid"=>104
+                    $open_id_info,
+                "tagid"=>$tag_id
                 ];
 //        dd(json_encode($data));
         //不对中文进行编码
@@ -124,26 +121,19 @@ class wechat_biaoqian_controller extends Controller
     {
 //        dd(1);
 
-        $all=$request->all();
-        dd($all);
-//        $id=$request->tag_id;
-//        $openid=$request->openid;
-//        dd($id,$openid);
+        $data=$request->all();
+
+        $open_id_info=$data['openid_list'];
+        $tag_id=$data['tag_id'];
         $url="https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token=".$this->wechat->get_access_token();
-        $open_id_info=DB::connection('mysql_shop')->table('wechat_openid')->select('open_id')->get()->toArray();
-        $open_id_list=[];
-//        dd($open_id_info);
-        foreach ($open_id_info as $v)
-        {
-            $open_id_list[]=$v->open_id;
-//            dump($open_id_list);
-        }
+//
+
         //dd($open_id_list);
         $data=[
             "openid_list"=>//粉丝列表
-                $open_id_list
+                $open_id_info
             ,
-            "tagid"=>104
+            "tagid"=>$tag_id
         ];
 //        dd(json_encode($data));
         //不对中文进行编码
@@ -154,16 +144,70 @@ class wechat_biaoqian_controller extends Controller
     }
 
     //获取用户身上的标签列表
-    public function get_user_tag()
+    public function get_user_tag(Request $request)
     {
+        $openid=$request->openid;
+//        dd($openid);
         $url="https://api.weixin.qq.com/cgi-bin/tags/getidlist?access_token=".$this->wechat->get_access_token();
         $data=[
-            "openid" => "oMbARt6tCM2dJZL6MjdKPmOxrpMY"
+            "openid" => $openid
         ];
         //不对中文进行编码
         $re=$this->wechat->post($url,json_encode($data,JSON_UNESCAPED_UNICODE));
 //        dd($re);
-        $re=json_decode($re,1);
+        $result=json_decode($re,1);
+
+
+        //以上为该接口   获取用户身上的标签列表  但是只能返回标签id
+        //故因此 完善
+
+        //获取id根据id
+        $id=$result['tagid_list'];
+        $id=implode('',$id);
+//        dd($id);
+        //问题：怎么传值 解决 调用方法($id)
+//        传给获取标签下订蛋用户列表的方法
+
+//        dd($data);
+//        dd($id);
+        $tag_id=[   "tag_id"=>[$id] ];
+        //拿到所有标签
+        $result_1=file_get_contents("https://api.weixin.qq.com/cgi-bin/tags/get?access_token=".$this->wechat->get_access_token()."");
+        $result_1=json_decode($result_1,1);
+
+        $re_arr = $result_1['tags'];
+//        dd($re_arr);
+        foreach($re_arr as $v){
+            foreach($tag_id['tag_id'] as $vo){
+                if($vo == $v['id']){
+                    return view('admin/wechat_biaoqian/user_tag_info',['id'=>$vo,'name'=>$v['name'],'openid'=>$openid]);
+                }
+
+            }
+        }
+
+
+    }
+
+    //给标签下的用户群发消息
+public function Batch_send_tag_user_info(Request $request)
+    {
+        $info=$request->all();
+        $tag_id=$info['tag_id'];
+        $content=$info['content'];
+//        dd($info);
+        $url = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=" . $this->wechat->get_access_token();
+        $data = [
+            "filter" => [
+                "is_to_all" => false,
+                "tag_id" => $tag_id,
+            ],
+            "text" =>[
+                "content"=>$content
+            ],
+            "msgtype"=>"text"
+        ];
+        $re=$this->wechat->post($url,json_encode($data,JSON_UNESCAPED_UNICODE));
         dd($re);
     }
 
