@@ -81,8 +81,11 @@ class wechat_user_controller extends Controller
     public function user_list_zhanshi(Request $request)
     {
         $tag_id=$request->all()['tag_id'];
+<<<<<<< HEAD
 //        dd($tag_id);
 //        $tag_id=implode('',$tag_id);
+=======
+>>>>>>> 9d58d38f75eaaea2d232a52547781124d4ae5d2f
 //        dd($tag_id);
         $user_list_info=DB::connection('mysql_shop')->table('wechat_openid')->get()->toArray();
         return view('dibayue/user_list',['data'=>$user_list_info,'tag_id'=>$tag_id]);
@@ -111,7 +114,7 @@ class wechat_user_controller extends Controller
         //首先去配置域名-》测试号->网页帐号	网页授权获取用户基本信息	无上限	修改不要加http等东西 一开始就需要
 //        $user_is_empty=DB::connection('mysql_shop')->table('wechat_user')->where('open_id',$openid)->get()->toArray();
         $redirect_uri='http://www.dishiyue.com/wechat/get_code';
-        $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=".env('WECHAT_APPID')."&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+        $url="h ttps://open.weixin.qq.com/connect/oauth2/authorize?appid=".env('WECHAT_APPID')."&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
         header('Location:'.$url);
     }
     //访问获取code 的接口获取ocde、集成在h5项目前台的注册登录
