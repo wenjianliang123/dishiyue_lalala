@@ -78,10 +78,13 @@ class wechat_user_controller extends Controller
 
     //以上都需去官网中查看文档的接口将参数放进去然后打印查看数据
     //用户列表展示
-    public function user_list_zhanshi()
+    public function user_list_zhanshi(Request $request)
     {
+        $tag_id=$request->all();
+        $tag_id=implode($tag_id);
+//        dd($tag_id);
         $user_list_info=DB::connection('mysql_shop')->table('wechat_openid')->get()->toArray();
-        return view('dibayue/user_list',['data'=>$user_list_info]);
+        return view('dibayue/user_list',['data'=>$user_list_info,'tag_id'=>$tag_id]);
     }
 
     //用户详情
