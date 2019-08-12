@@ -324,6 +324,16 @@ Route::prefix('/admin')->group(function() {
 
     //根据标签群发消息
     Route::get('Batch_send_tag_user_info_view','Admin\biaoqian_guanli_controller@Batch_send_tag_user_info_view');
+
+});
+
+//接口配置的url ---设置测试号的接口配置url 第一次无法配置成功
+Route::post('admin/jiekou_peizhi_url','Admin\biaoqian_guanli_controller@jiekou_peizhi_url');
+
+Route::prefix('/admin')->group(function() {
+    //接收普通消息
+    Route::post('/Receive_normal_messages','Admin\biaoqian_guanli_controller@Receive_normal_messages');
+
 });
 
 
