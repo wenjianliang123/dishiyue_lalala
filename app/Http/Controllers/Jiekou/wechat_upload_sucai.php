@@ -29,7 +29,7 @@ class wechat_upload_sucai extends Controller
     //上传临时永久都可以 已优化
     public function do_upload_sucai(Request $request)
     {
-        $aa=$request->all();
+//        $aa=$request->all();
 //        dd($aa);
 
         $upload_type = $request['up_type'];

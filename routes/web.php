@@ -211,12 +211,6 @@ Route::post('/zhifubao/pay','PayController@do_pay');
  */
 Route::get('yuekao/login','Yuekao\xinwenController@login');
 Route::post('yuekao/do_login','Yuekao\xinwenController@do_login');
-<<<<<<< HEAD
-//八月接口
-Route::any('ceshijiekou/','Yuekao\xinwenController@ceshijiekou');
-=======
-
-
 
 /**
  * 八月接口
@@ -286,7 +280,7 @@ Route::prefix('/admin')->group(function() {
     Route::post('/del_moban','Admin\wechat_moban_controller@del_moban');
 });
 
->>>>>>> c89ce924902bac4eacb0c0aa1d39249e0ed2aeb8
+
 
 Route::group(['middleware' => ['checkLogin_xinwen'],'prefix'=>'/yuekao/xinwen/'], function () {
     Route::get('index','Yuekao\xinwenController@index');
