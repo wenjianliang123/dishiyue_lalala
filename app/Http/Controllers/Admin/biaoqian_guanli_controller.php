@@ -90,13 +90,21 @@ class biaoqian_guanli_controller extends Controller
     }
 
     //根据标签群发消息
-public function Batch_send_tag_user_info_view(Request $request)
+    public function Batch_send_tag_user_info_view(Request $request)
     {
         $tag_id=implode($request->all());
 //        dd($tag_id);
         return view('admin/wechat_biaoqian/Batch_send_tag_user_info_view',['tag_id'=>$tag_id]);
     }
 
+    //接口配置的url
+    public function jiekou_peizhi_url()
+    {
+        // （只能用于线上）第一次无法配置成功使用以下两行代码
+        /*echo $_GET['echostr'];
+        die();*/
+        echo "您已经进入接口配置的url";
+    }
 }
 
 

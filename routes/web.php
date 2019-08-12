@@ -322,6 +322,8 @@ Route::prefix('/admin')->group(function() {
 
     //根据标签群发消息
     Route::get('Batch_send_tag_user_info_view','Admin\biaoqian_guanli_controller@Batch_send_tag_user_info_view');
+    //接口配置的url
+    Route::get('jiekou_peizhi_url','Admin\biaoqian_guanli_controller@jiekou_peizhi_url');
 });
 
 
