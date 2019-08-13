@@ -101,33 +101,6 @@ class biaoqian_guanli_controller extends Controller
         return view('admin/wechat_biaoqian/Batch_send_tag_user_info_view',['tag_id'=>$tag_id]);
     }
     //接口配置的url
-    public function jiekou_peizhi_url()
-    {
-        // （只能用于线上）第一次无法配置成功使用以下两行代码
-//        echo $_GET['echostr'];
-//        die();
-//        echo "您已经进入接口配置的url";
-        //        echo 1;dd();
-        //$this->checkSignature();
-
-        //php用file_get_contents("php://input")或者$HTTP_RAW_POST_DATA可以接收xml数据
-        $data = file_get_contents("php://input");
-        dd($data);
-        //解析XML LIBXML_NOCDATA - 将 CDATA 设置为文本节点 传过来的数据中带有CDATA样式的前缀 将其设为文本节点
-        //将一个XML字符串装载入一个对象中
-//        dd($data);
-        $xml = simplexml_load_string($data,'SimpleXMLElement', LIBXML_NOCDATA);        //将 xml字符串 转换成对象
-        $xml = (array)$xml; //转化成数组
-        //写入日志
-        $log_str = date('Y-m-d H:i:s') . "\n" . $data . "\n<<<<<<<";
-//      //file_put_contents — 将一个字符串写入文件 和依次调用 fopen()，fwrite() 以及 fclose() 功能一样。
-//        FILE_APPEND	如果文件 filename 已经存在，追加数据而不是覆盖。
-        file_put_contents(storage_path('logs/Receive_normal_messages.log'),$log_str,FILE_APPEND);
-        \Log::Info(json_encode($xml));
-        $message = '您好!';
-        $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
-        echo $xml_str;
-    }
     //接收普通消息
     /*
          *  ToUserName	开发者微信号
@@ -137,39 +110,67 @@ class biaoqian_guanli_controller extends Controller
             Content	文本消息内容
             MsgId	消息id，64位整型
         */
-    public function Receive_normal_messages()
+    public function jiekou_peizhi_url() //固定信息好像写一遍就可以一直使用 不用在postman中重复给值
     {
-//        echo 1;dd();
+        // （只能用于线上）第一次无法配置成功使用以下两行代码
+//        echo $_GET['echostr'];
+//        die();
+//        echo "您已经进入接口配置的url";
+        //        echo 1;dd();
         //$this->checkSignature();
 
-        //php用file_get_contents("php://input")或者$HTTP_RAW_POST_DATA可以接收xml数据
+        //php用file_get_contents("php://input")可以接收xml数据
         $data = file_get_contents("php://input");
         //解析XML LIBXML_NOCDATA - 将 CDATA 设置为文本节点 传过来的数据中带有CDATA样式的前缀 将其设为文本节点
         //将一个XML字符串装载入一个对象中
 //        dd($data);
         $xml = simplexml_load_string($data,'SimpleXMLElement', LIBXML_NOCDATA);        //将 xml字符串 转换成对象
-//        dd($xml);
         $xml = (array)$xml; //转化成数组
         //写入日志
-        $log_str = date('Y-m-d H:i:s') . "\n" . $data . "\n<<<<<<<";
+        $log_str = date('Y-m-d H:i:s') . "\n" . $data . "\n".'<<<<<<<';
 //      //file_put_contents — 将一个字符串写入文件 和依次调用 fopen()，fwrite() 以及 fclose() 功能一样。
 //        FILE_APPEND	如果文件 filename 已经存在，追加数据而不是覆盖。
         file_put_contents(storage_path('logs/Receive_normal_messages.log'),$log_str,FILE_APPEND);
-        \Log::Info(json_encode($xml));
-        $message = '您好!';
-        $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
-        echo $xml_str;dd();
+//        print_r($xml['MsgType']);die();
+//        \Log::Info(json_encode($xml));
+        if($xml['MsgType']=='text'){
+            $message = '您好!';
+            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+            echo $xml_str;
+        }elseif ($xml['MsgType']=='event'){
+            if($xml['Event']=='subscribe'){
+                if(isset($xml['EventKey'])){
+                    //拉取新人的操作
+//                    print_r($xml['EventKey']);die();
+                    $agent_code=$xml['EventKey'];
+//                    echo $agent_code;die();//10
+                    $agent_code = explode('_',$agent_code)[1];
+//                    echo $agent_code;die();
+                    $agent_info = DB::connection('mysql_shop')->table('user_agent')->where(['user_id'=>$agent_code,'openid'=>$xml['FromUserName']])->first();
+                    if(empty($agent_info)){
+                        DB::connection('mysql_shop')->table('user_agent')->insert([
+                            'user_id'=>$agent_code,
+                            'openid'=>$xml['FromUserName'],
+                            'add_time'=>time()
+                        ]);
+                        echo 'okok';die();
+                    }else{
+                        echo 11;
+                    }
+                }
+                $message = '关注事件!';
+                $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+                echo $xml_str;
+            }
+
+        }
+
 
     }
 
-    //接口配置的url
-    public function jiekou_peizhi_url()
-    {
-        // （只能用于线上）第一次无法配置成功使用以下两行代码
-        /*echo $_GET['echostr'];
-        die();*/
-        echo "您已经进入接口配置的url";
-    }
+
+
+
 }
 
 
