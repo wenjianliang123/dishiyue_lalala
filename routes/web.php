@@ -18,7 +18,7 @@ Route::get('/', function () {
 
 /**
  * 商品管理 图片上传
- */
+ */  
 Route::prefix('/admin/goods/')->group(function() {
     Route::get('/add','Admin\goodsController@add');
     Route::post('/do_add','Admin\goodsController@do_add');
@@ -212,8 +212,6 @@ Route::post('/zhifubao/pay','PayController@do_pay');
 Route::get('yuekao/login','Yuekao\xinwenController@login');
 Route::post('yuekao/do_login','Yuekao\xinwenController@do_login');
 
-
-
 /**
  * 八月接口
  */
@@ -325,16 +323,31 @@ Route::prefix('/admin')->group(function() {
     //根据标签群发消息
     Route::get('Batch_send_tag_user_info_view','Admin\biaoqian_guanli_controller@Batch_send_tag_user_info_view');
 
+
+
+
 });
 
 //接口配置的url ---设置测试号的接口配置url 第一次无法配置成功
 Route::any('admin/jiekou_peizhi_url','Admin\biaoqian_guanli_controller@jiekou_peizhi_url');
 
-Route::prefix('/admin')->group(function() {
-    //接收普通消息
-    Route::post('/Receive_normal_messages','Admin\biaoqian_guanli_controller@Receive_normal_messages');
 
+//接收普通消息(自动回复)
+Route::prefix('/admin')->group(function() {
+    //接收普通消息(自动回复)
+    Route::get('/Receive_normal_messages','Admin\biaoqian_guanli_controller@Receive_normal_messages');
 });
+
+//分销
+Route::prefix('/admin/fenxiao')->group(function() {
+    //用户列表
+    Route::get('/user_list','Admin\fenxiaoController@user_list');
+    //创建专属二维码
+    Route::get('/create_qrcode','Admin\fenxiaoController@create_qrcode');
+    //（下属表）分销用户列表
+    Route::get('/agent_list','Admin\fenxiaoController@agent_list');
+});
+ 
 
 
 Route::group(['middleware' => ['checkLogin_xinwen'],'prefix'=>'/yuekao/xinwen/'], function () {

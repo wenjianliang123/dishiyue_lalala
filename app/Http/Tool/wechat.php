@@ -138,15 +138,19 @@ class wechat{
      */
     public function upload_source($up_type,$type,$title='',$desc=''){
         $file = $this->request->file($type);
+//        dd($file);//显示上传的文件
         $file_ext = $file->getClientOriginalExtension();  //获取文件扩展名
         //重命名
         $new_file_name = time().rand(1000,9999). '.'.$file_ext;
+//        dd($new_file_name);
         //文件保存路径
         //保存文件
         //自己：storeaAs是为了重命名
         $save_file_path = $file->storeAs('wechat/video',$new_file_name); //返回保存成功之后的文件路径
+//        dd($save_file_path);
         //根据当前项目的绝对路径 可能是
         $path = './storage/'.$save_file_path;
+//        dd($path);
         //判断临时还是永久 1为临时 2为永久
         if($up_type  == 1){
             $url='https://api.weixin.qq.com/cgi-bin/media/upload?access_token=' . $this->get_access_token().'&type='.$type;
