@@ -328,7 +328,7 @@ Route::prefix('/admin')->group(function() {
 });
 
 //接口配置的url ---设置测试号的接口配置url 第一次无法配置成功
-Route::post('admin/jiekou_peizhi_url','Admin\biaoqian_guanli_controller@jiekou_peizhi_url');
+Route::any('admin/jiekou_peizhi_url','Admin\biaoqian_guanli_controller@jiekou_peizhi_url');
 
 Route::prefix('/admin')->group(function() {
     //接收普通消息
