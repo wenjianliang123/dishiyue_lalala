@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         'limitTimeAccessInto' => \App\Http\Middleware\limitTimeAccessInto::class,
         'chekuLogin' => \App\Http\Middleware\chekuLogin::class,
         'checkLogin_xinwen' => \App\Http\Middleware\checkLogin_xinwen::class,
+        'check_login_wechat_liuyan' => \App\Http\Middleware\check_login_wechat_liuyan::class,
     ];
 
     /**

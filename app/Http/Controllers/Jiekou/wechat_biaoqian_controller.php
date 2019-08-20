@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Jiekou;
 
 use Illuminate\Http\Request;

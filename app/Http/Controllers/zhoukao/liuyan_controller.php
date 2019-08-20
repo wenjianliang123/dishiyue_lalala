@@ -1,118 +1,37 @@
 <?php
 
-namespace App\Http\Controllers\Jiekou;
+namespace App\Http\Controllers\zhoukao;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use DB;
+use App\Http\Controllers\Jiekou\wechat_moban_controller;
 use App\Http\Tool\wechat;
+use DB;
 
-class wechat_user_controller extends Controller
+class liuyan_controller extends Controller
 {
+    public $wechat_moban_controller;
     public $wechat;
 //    public $open_id;
-    public function __construct(wechat $wechat)
+    public function __construct(wechat_moban_controller $wechat_moban_controller,wechat $wechat)
     {
+        $this->wechat_moban_controller =$wechat_moban_controller;
         $this->wechat =$wechat;
     }
-
-    //测试八月——第一个接口 用的postman辅助判断自定义的access_token
-    public function ceshijiekou(Request $request)
-    {
-        if(empty($request->all()['access_token'])||$request->all()['access_token']!='ACCESS_TOKEN')
-        {
-            return json_encode(['errno'=>'40014']);
-        }
-        //这的数据是为了测试用的 通过了access_token验证的话就可以查看此数据
-        $info =DB::table('yuekao_xinwen')->get()->toArray();
-        $info=json_decode(json_encode($info),1);
-        echo json_encode($info);
-    }
-
-    //测试八月——获取用户列表、循环入库
+    //从数据库中拿到用户信息
     public function get_user_list()
     {
-        //$this-》get_access_token方法获取access_token next_openid可以为空  用户不多时可以为空
-        $access_token='';
-        $access_token=$this->wechat->get_access_token();
-//        dd($access_token);
-        //file_get_contents是为了实现模拟get请求方式 参数用{$变量名输出}
-        $user_list=file_get_contents("https://api.weixin.qq.com/cgi-bin/user/get?access_token={$access_token}&next_openid=");
-//        ！！！需要注意的是 access_token 要将其变为一定时间内不会改变的值 ！！！否则会报40001的错
-//                    说你的access_token错误
-        $user_list=json_decode($user_list,1);
-        //查看时 json_decode 解析一下
-//        return $user_list;
-
-
-
-
-        $open_id=$user_list['data']['openid'];
-//        $open_id=implode(',',$open_id);
-//        $open_id=implode(',',$open_id);
-//        dd($open_id);
-
-//        $user_info='';
-        $subscribe='';
-        foreach ($open_id as $v)
-        {
-            $user_db_list_info=DB::connection('mysql_shop')->table('wechat_openid')->where('open_id',$v)->value('open_id');
-            if(empty($user_db_list_info)){
-                $user_info=file_get_contents("https://api.weixin.qq.com/cgi-bin/user/info?access_token={$access_token}&openid={$v}&lang=zh_CN");
-                $user_info=json_decode($user_info,1);
-
-                $res=DB::connection('mysql_shop')->table('wechat_openid')->insert([
-                    'open_id' => $v,
-                    'subscribe' => $user_info['subscribe'],
-                    'add_time'=>time(),
-                ]);
-
-            }
-
-        }
-//
-//        echo "<script>history.go(-1)</script>";
-        return redirect('wechat/user_list_zhanshi');
-
+        $user_list_info=DB::connection('mysql_shop')->table('user_wechat')->get()->toArray();
+        $user_list_info=json_decode(json_encode($user_list_info),1);
+        return view('zhoukao/liuyan/user_list',['data'=>$user_list_info]);
     }
 
-    //以上都需去官网中查看文档的接口将参数放进去然后打印查看数据
-    //用户列表展示
-    public function user_list_zhanshi(Request $request)
-    {
-        $tag_id=$request->all()['tag_id'];
-
-//        dd($tag_id);
-//        $tag_id=implode('',$tag_id);
-
-//        dd($tag_id);
-        $user_list_info=DB::connection('mysql_shop')->table('wechat_openid')->get()->toArray();
-        return view('dibayue/user_list',['data'=>$user_list_info,'tag_id'=>$tag_id]);
-    }
-
-    //用户详情
-    public function user_detail($id)
-    {
-        $info=DB::connection('mysql_shop')->table('wechat_openid')->where('id',$id)->get()->toArray();
-        $info=array_map('get_object_vars',$info);
-        $info=json_decode(json_encode($info),1);
-//        $info=json_decode(json_encode($info));
-//        dd($info);
-        $open_id=$info[0]['open_id'];
-//        dd($open_id);
-        $access_token=$this->wechat->get_access_token();
-        $user_detail=$this->wechat->get_user_info($open_id);
-//        dd($user_detail);
-//        dd($user_detail);
-        return view('dibayue/user_detail',['data'=>$user_detail,'id'=>$id]);
-    }
-
-   //有个网页去跳转、集成在h5项目前台的注册登录
+    //需要用到微信开发工具
     public function login()
     {
         //首先去配置域名-》测试号->网页帐号	网页授权获取用户基本信息	无上限	修改不要加http等东西 一开始就需要
 //        $user_is_empty=DB::connection('mysql_shop')->table('wechat_user')->where('open_id',$openid)->get()->toArray();
-        $redirect_uri='http://www.dishiyue.com/wechat/get_code';
+        $redirect_uri='http://www.dishiyue.com/zhoukao/liuyan/get_code';
         $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=".env('WECHAT_APPID')."&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
         header('Location:'.$url);
     }
@@ -172,7 +91,7 @@ class wechat_user_controller extends Controller
                 //跳转信息
                 'message'=>'登陆成功，正在跳转至首页！',
                 //自己的跳转路径
-                'url' =>asset('/'),
+                'url' =>asset('/zhoukao/liuyan/get_user_list'),
                 //跳转路径名称
                 'urlname' =>'首页',
                 //跳转等待时间（s）
@@ -214,9 +133,9 @@ class wechat_user_controller extends Controller
                 //跳转信息
                 'message'=>'注册、登陆成功，正在跳转至首页！',
                 //自己的跳转路径
-                'url' =>asset(''),
+                'url' =>asset('/zhoukao/liuyan/get_user_list'),
                 //跳转路径名称
-                'urlname' =>'首页',
+                'urlname' =>'用户列表',
                 //跳转等待时间（s）
                 'jumpTime'=>3,
             ]);
@@ -226,6 +145,73 @@ class wechat_user_controller extends Controller
 
     }
 
+    //推送消息的页面
+    public function push_liuyan_view(Request $request){
+        $id=$request->id;
+//        dd($id);
+        return view('zhoukao/liuyan/push_liuyan_view',['user_id'=>$id]);
+    }
+    //留言 ———推送消息
+    public function push_liuyan(Request $request)
+    {
+        //用户id
+        $id=$request->user_id;
+        //留言内容
+        $liuyan_content=$request->liuyan_content;
+//        dd($liuyan_content);
+//        dd($id);
+        $wechat_user_info=DB::connection('mysql_shop')->table('wechat_user')->where('user_id',$id)->select('open_id')->get()->toArray();
+        $wechat_user_info=json_decode(json_encode($wechat_user_info),1);
+        $open_id=$wechat_user_info[0]['open_id'];
+//        dd($open_id);
+        //模板
+        $template_id="B4Bxv_jmNERAXWgHWGyK_rlM-b6t9EF-VABWMyBREPE";
+        //发送者
+        $push_user=session('wechat_user_name');
+        //返回来的是一个用户的openid
+        $pull_openid=$this->wechat->push_moban_info($open_id,$template_id,$push_user,$liuyan_content);
+//        dd($pull_openid);
+//        ,['pull_openid'=>$pull_openid]
+        if(!empty($pull_openid))
+        {
+            $user_name=$this->wechat->get_user_info($pull_openid)['nickname'];
+//            url('wechat/user_list_zhanshi')}}?tag_id={{$v['id']
+            $ruku=DB::connection('mysql_shop')->table('wechat_liuyan')->insert([
+                'push_user'=>$push_user,
+                'user_name'=>$user_name,
+                'liuyan_content'=>$liuyan_content,
+                'open_id'=>$pull_openid,
+                'add_time'=>time(),
+            ]);
+            if($ruku)
+            {
+//                return redirect("zhoukao/liuyan/my_liuyan"?'open_id':$open_id);
+                return redirect("zhoukao/liuyan/my_liuyan?pull_openid=$pull_openid");
+            }else{
+                echo "留言入库失败";
+            }
+        }else{
+            echo "推送失败";die();
+        }
+    }
+    //我的留言
+    public function my_liuyan(Request $request)
+    {
+        $pull_openid=$request->all()['pull_openid'];
+//        dd($pull_openid);
+        $data=DB::connection('mysql_shop')->table('wechat_liuyan')->where('open_id',$pull_openid)->orderBy('liuyan_id','desc')->first();
+//        $data=array_map('get_object_vars',$data);
+        $data=json_decode(json_encode($data),1);
+//        dd($data);
+        return view('zhoukao/liuyan/my_liuyan',['data'=>$data]);
+    }
+
+    //测试
+    public function test()
+    {
+        $re=$this->wechat->get_jsapi_ticket();
+        dd($re);
+    }
 
 
 

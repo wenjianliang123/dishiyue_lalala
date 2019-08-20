@@ -50,9 +50,10 @@ class wechat_moban_controller extends Controller
         $url="https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=".$this->wechat->get_access_token();
         $openid_info=DB::connection('mysql_shop')->table('wechat_openid')->select('open_id')->get();
 //        dd($openid_info);
+        $template_id="wE_3J32otV-XecF9rgGLavjaSwgJDecndSI56owqaio";
         foreach ($openid_info as $v) {
 //            dump($v);
-                $this->wechat->push_moban_info($v->open_id);
+                $this->wechat->push_moban_info($v->open_id,$template_id);
         };
 //        dd();
 //        $result=$this->wechat->post($url,json_encode($data));

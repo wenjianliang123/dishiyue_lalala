@@ -328,7 +328,7 @@ Route::prefix('/admin')->group(function() {
 
 });
 
-//接口配置的url ---设置测试号的接口配置url 第一次无法配置成功
+//接口配置的url ---设置测试号的接口配置url 第一次无法配置成功 echo $_GET['echostr'];
 Route::any('admin/jiekou_peizhi_url','Admin\biaoqian_guanli_controller@jiekou_peizhi_url');
 
 
@@ -347,7 +347,22 @@ Route::prefix('/admin/fenxiao')->group(function() {
     //（下属表）分销用户列表
     Route::get('/agent_list','Admin\fenxiaoController@agent_list');
 });
- 
+
+//自定义菜单
+Route::prefix('/wechat/custom_menu')->group(function() {
+    //菜单添加页面
+    Route::get('/menu_add','Jiekou\CustomMenuController@menu_add');
+    //菜单添加执行页面
+    Route::post('/menu_do_add','Jiekou\CustomMenuController@menu_do_add');
+    //菜单展示页面
+    Route::get('/menu_list','Jiekou\CustomMenuController@menu_list');
+    //重新加载菜单
+    Route::get('/reload_menu_list','Jiekou\CustomMenuController@reload_menu_list');
+    //菜单查询接口 --未测试
+    Route::get('/display_menu','Jiekou\CustomMenuController@display_menu');
+    //菜单删除 --未测试
+    Route::get('/del_menu','Jiekou\CustomMenuController@del_menu');
+});
 
 
 Route::group(['middleware' => ['checkLogin_xinwen'],'prefix'=>'/yuekao/xinwen/'], function () {
@@ -357,3 +372,25 @@ Route::group(['middleware' => ['checkLogin_xinwen'],'prefix'=>'/yuekao/xinwen/']
     Route::get('del/{id}','Yuekao\xinwenController@del');
     Route::get('xinwen_detail/{id}','Yuekao\xinwenController@xinwen_detail');
 });
+
+//测试lyj
+Route::get('get_access_token','XIAOchouchou\testController@get_access_token');
+
+//周考——留言
+Route::group(['middleware' => ['check_login_wechat_liuyan'],'prefix'=>'/zhoukao/liuyan'], function () {
+    //用户列表
+    Route::get('/get_user_list','zhoukao\liuyan_controller@get_user_list');
+    //推送留言页面
+    Route::get('/push_liuyan_view/{id}','zhoukao\liuyan_controller@push_liuyan_view');
+    //推送留言
+    Route::post('/push_liuyan','zhoukao\liuyan_controller@push_liuyan');
+    //我的留言
+    Route::get('/my_liuyan','zhoukao\liuyan_controller@my_liuyan');
+
+});
+//周考——留言 用户登录
+Route::get('/zhoukao/liuyan/login','zhoukao\liuyan_controller@login');
+//周考——留言 获取code
+Route::get('/zhoukao/liuyan/get_code','zhoukao\liuyan_controller@get_code');
+//测试get_jsapi_ticket
+Route::get('/zhoukao/liuyan/test','zhoukao\liuyan_controller@test');

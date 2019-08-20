@@ -54,6 +54,31 @@ class wechat{
         return $access_token;
     }
 
+    /**
+     * 获取JS-SDK中的jsapi_ticket
+     */
+    public function get_jsapi_ticket()
+    {
+        //实例化一波redis
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1','6379');
+        $jsapi_ticket_key = 'jsapi_ticket';
+        if($redis->exists($jsapi_ticket_key)){
+            //去缓存拿
+//            echo '这是缓存';die();
+            $jsapi_ticket = $redis->get($jsapi_ticket_key);
+        }else{
+            //去微信接口拿
+            $jsapi_re = file_get_contents("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=".$this->get_access_token()."&type=jsapi");
+            $jsapi_result = json_decode($jsapi_re,1);
+            $jsapi_ticket = $jsapi_result['ticket'];
+            $expire_time = $jsapi_result['expires_in'];
+            //加入缓存
+            $redis->set($jsapi_ticket_key,$jsapi_ticket,$expire_time);
+        }
+        return $jsapi_ticket;
+    }
+
     //curl发送post请求
     public function post($url, $data){
         //初使化init方法
@@ -82,12 +107,12 @@ class wechat{
     }
 
     //推送
-    public function push_moban_info($open_id)
+    public function push_moban_info($open_id,$template_id='yCYPfV_udZC5TM-U_GhCTUgfmQbefMOlGxS-4VfnkxI',$push_user='',$liuyan_content='')
     {
         $url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token='.$this->get_access_token();
         $data = [
             "touser" => $open_id,
-            "template_id" => "wE_3J32otV-XecF9rgGLavjaSwgJDecndSI56owqaio",
+            "template_id" => $template_id,
             "url" => "http://weixin.qq.com/download",
             //跳转小程序需要下面的miniprogram的参数
 //                    "miniprogram"=>[
@@ -100,11 +125,11 @@ class wechat{
                     "color" => "#173177"
                 ],
                 "keyword1" => [
-                    "value" => "对",
+                    "value" => "$push_user",//留言发送者
                     "color" => "#173177"
                 ],
                 "keyword2" => [
-                    "value" => "错",
+                    "value" => "$liuyan_content",//留言内容
                     "color" => "#173177"
                 ],
                 "remark" => [
@@ -114,6 +139,8 @@ class wechat{
             ]
         ];
         $result=$this->post($url,json_encode($data));
+//        dd($result);
+        return $open_id;
     }
 
     /**
@@ -201,6 +228,8 @@ class wechat{
         dd($re);
 
     }
+
+
 }
 
 
