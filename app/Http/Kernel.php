@@ -60,6 +60,11 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'login' => \App\Http\Middleware\Login::class,
+        'limitTimeAccessInto' => \App\Http\Middleware\limitTimeAccessInto::class,
+        'chekuLogin' => \App\Http\Middleware\chekuLogin::class,
+        'checkLogin_xinwen' => \App\Http\Middleware\checkLogin_xinwen::class,
+        'check_login_wechat_liuyan' => \App\Http\Middleware\check_login_wechat_liuyan::class,
     ];
 
     /**
