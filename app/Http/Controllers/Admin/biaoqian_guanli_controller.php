@@ -87,8 +87,8 @@ class biaoqian_guanli_controller extends Controller
     //接口配置的url
     //接收普通消息
     /*
-         *  ToUserName	开发者微信号
-            FromUserName	发送方帐号（一个OpenID）
+         *  ToUserName	开发者（测试号的微信号）微信号
+            FromUserName	被发送方帐号（一个OpenID）
             CreateTime	消息创建时间 （整型）
             MsgType	消息类型，文本为text
             Content	文本消息内容
@@ -143,6 +143,23 @@ class biaoqian_guanli_controller extends Controller
                 }
                 $message = '关注事件!';
                 $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+                echo $xml_str;
+                //老师的表白
+            }elseif($xml['Event'] == 'CLICK'){
+                if($xml['EventKey'] == 'my_biaobai'){
+                    $biaobai_info = DB::connection('mysql_cart')->table('biaobai')->where(['from_user'=>$xml['FromUserName']])->get()->toArray();
+                    $message = '';
+                    foreach($biaobai_info as $v){
+                        $message .= $v->content."\n";
+                    }
+                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+                    echo $xml_str;
+                }
+                //老师的地理位置 看不懂
+            }elseif($xml['Event'] == 'location_select') {
+                $message = $xml['SendLocationInfo']->Label;
+                \Log::Info($message);
+                $xml_str = '<xml><ToUserName><![CDATA[otAUQ1UtX-nKATwQMq5euKLME2fg]]></ToUserName><FromUserName><![CDATA[' . $xml['ToUserName'] . ']]></FromUserName><CreateTime>' . time() . '</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[' . $message . ']]></Content></xml>';
                 echo $xml_str;
             }
         }

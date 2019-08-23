@@ -13,7 +13,7 @@ class fenxiaoController extends Controller
     {
         $this->wechat=$wechat;
     }
-    //此控制器时分销 就是拉取新人 代理商
+    //此控制器是分销 就是拉取新人 代理商
     /**
      * 用户列表
      */
@@ -21,12 +21,18 @@ class fenxiaoController extends Controller
     {
         $user_info = DB::connection('mysql_shop')->table('user_wechat')->get();
 //        dd($user_info);
-        $js_sdk_sign=$this->compute_sign();
+        $jsconfig = [
+            'appid'=>env('WECHAT_APPID'),//APPID
+            'timestamp'=>time(),
+            'noncestr'=>time().rand(111111,999999).'wenjianliang',
+        ];
+        $sign = $this->compute_sign($jsconfig);
+        $jsconfig['sign'] = $sign;
+        $url=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 //        dd($js_sdk_sign);
-
-        return view('admin/fenxiao/user_list',['data'=>$user_info,'js_sdk_sign'=>$js_sdk_sign]);
+        return view('admin/fenxiao/user_list',['data'=>$user_info,'jsconfig'=>$jsconfig,'url'=>$url]);
     }
-
+    //这是在做分享接口的那些
     /**
      *JSSDK签名计算
      * 签名算法
@@ -40,17 +46,13 @@ class fenxiaoController extends Controller
      * 对string1作sha1加密，字段名和字段值都采用原始值，不进行URL 转义。
      * 即signature=sha1(string1)。 示例：
      */
-    public function compute_sign()
+    public function compute_sign($param)
     {
-        $noncestr=md5(rand(10000,99999).'wenjianliang');
-        $jsapi_ticket=$this->wechat->get_jsapi_ticket();
-        $timestamp=time();
-        $url=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-        //手动模拟ASCII排序
-        $js_sdk_sign='jsapi_ticket='.$jsapi_ticket&'noncestr='.$noncestr&'timestamp='.$timestamp&'url='.'http://'.$url;
-        //sha1加密
-        $js_sdk_sign=sha1($js_sdk_sign);
-        return $js_sdk_sign;
+        $current_url='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];     //当前调用 jsapi的 url
+        $ticket = $this->wechat->get_jsapi_ticket();
+        $str='jsapi_ticket='.$ticket.'&noncestr='.$param['noncestr'].'&timestamp='.$param['timestamp'].'&url='.$current_url;
+        $signature=sha1($str);
+        return $signature;
     }
 
     /**
@@ -88,7 +90,7 @@ class fenxiaoController extends Controller
 //        dump($url);
         /**
          * 保存图片 二维码存入larvel
-        */
+         */
         //实例化 guzzlehttp中的client类
         $client = new Client();
 //        发送get请求
@@ -141,7 +143,7 @@ class fenxiaoController extends Controller
         }else{
             echo '专属二维码创建失败';
         }
-     }
+    }
     /**
      * 用户推广用户列表
      * @param Request $request
