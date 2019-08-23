@@ -31,7 +31,7 @@ class liuyan_controller extends Controller
     {
         //首先去配置域名-》测试号->网页帐号	网页授权获取用户基本信息	无上限	修改不要加http等东西 一开始就需要
 //        $user_is_empty=DB::connection('mysql_shop')->table('wechat_user')->where('open_id',$openid)->get()->toArray();
-        $redirect_uri='http://www.dishiyue.com/zhoukao/liuyan/get_code';
+        $redirect_uri='http://www.wenjianliang.top/zhoukao/liuyan/get_code';
         $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=".env('WECHAT_APPID')."&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
         header('Location:'.$url);
     }

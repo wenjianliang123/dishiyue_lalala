@@ -80,7 +80,7 @@ class wechat_biaoqian_controller extends Controller
     public function Batch_tag_users(Request $request)
     {
         $info=$request->all();
-        dd($info);
+//        dd($info);
         $tag_id=$info['tag_id'];
         $open_id_info=$info['openid_list'];
 //                  dd($tag_id,$open_id_info);
