@@ -19,7 +19,7 @@ class CustomMenuController extends Controller
     //菜单添加页面
     public function menu_add()
     {
-        return view('wechat/custom_menu/menu_add');
+        return view('wechat/custom_menu/menu_ardd');
     }
 
     //菜单添加执行页面
@@ -271,17 +271,5 @@ class CustomMenuController extends Controller
         print_r(json_decode($re,1));
     }
 
-    //无限极循环
-    public function createTreeBySon($data,$parent_id=0)
-    {
-        $new_arr=[];
-        foreach ($data as $key => $value){
-            if ($value['parent_id']==$parent_id){
-                $new_arr[$key]= $value;
-                $new_arr[$key]['son']=$this->createTreeBySon($data,$value['menu_id']);
-            }
-        }
-        return $new_arr;
-    }
 
 }

@@ -156,7 +156,7 @@ class wechat_biaoqian_controller extends Controller
 //        dd($re);
         $result=json_decode($re,1);
 
-
+//        dd($result);
         //以上为该接口   获取用户身上的标签列表  但是只能返回标签id
         //故因此 完善
 
@@ -164,6 +164,20 @@ class wechat_biaoqian_controller extends Controller
         $id=$result['tagid_list'];
         $id=implode('',$id);
 //        dd($id);
+
+//        chunk_split();
+
+//        $token = strtok($id,",");
+//        $dd=[];
+//        while ($token!== false)
+//        {
+//            echo "$token<br>";
+//            $token = strtok(" ");
+//            $dd[]=$token;
+//        }
+//        dump($dd);
+
+
         //问题：怎么传值 解决 调用方法($id)
 //        传给获取标签下订蛋用户列表的方法
 
@@ -189,7 +203,7 @@ class wechat_biaoqian_controller extends Controller
     }
 
     //给标签下的用户群发消息
-public function Batch_send_tag_user_info(Request $request)
+    public function Batch_send_tag_user_info(Request $request)
     {
         $info=$request->all();
         $tag_id=$info['tag_id'];

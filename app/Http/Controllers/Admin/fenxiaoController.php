@@ -13,7 +13,7 @@ class fenxiaoController extends Controller
     {
         $this->wechat=$wechat;
     }
-    //此控制器时分销 就是拉取新人 代理商
+    //此控制器是分销 就是拉取新人 代理商
     /**
      * 用户列表
      */
@@ -32,7 +32,7 @@ class fenxiaoController extends Controller
 //        dd($js_sdk_sign);
         return view('admin/fenxiao/user_list',['data'=>$user_info,'jsconfig'=>$jsconfig,'url'=>$url]);
     }
-
+    //这是在做分享接口的那些
     /**
      *JSSDK签名计算
      * 签名算法
@@ -90,7 +90,7 @@ class fenxiaoController extends Controller
 //        dump($url);
         /**
          * 保存图片 二维码存入larvel
-        */
+         */
         //实例化 guzzlehttp中的client类
         $client = new Client();
 //        发送get请求
@@ -143,7 +143,7 @@ class fenxiaoController extends Controller
         }else{
             echo '专属二维码创建失败';
         }
-     }
+    }
     /**
      * 用户推广用户列表
      * @param Request $request

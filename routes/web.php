@@ -399,3 +399,36 @@ Route::get('/zhoukao/liuyan/login','zhoukao\liuyan_controller@login');
 Route::get('/zhoukao/liuyan/get_code','zhoukao\liuyan_controller@get_code');
 //测试get_jsapi_ticket
 Route::get('/zhoukao/liuyan/test','zhoukao\liuyan_controller@test');
+
+
+/**
+ * esay-wechat 的基本运用
+ */
+
+Route::get('/esay_wechat/get_user_info','Jiekou\biaobai_controller@test');
+
+
+/**
+ * 2019-07月份 第八月 月考B卷 表白
+ */
+//表白
+Route::group(['middleware' => ['check_login_wechat_biaobai'],'prefix'=>'/biaobai'], function () {
+//可以表白的用户列表
+    Route::get('/user_list','Jiekou\biaobai_controller@get_user_list');
+//表白视图
+    Route::get('/biaobai_content_view/{id}','Jiekou\biaobai_controller@biaobai_content_view');
+//我要表白的视图
+    Route::post('/push_biaobai','Jiekou\biaobai_controller@push_biaobai');
+//我的表白
+    Route::get('/my_biaobai','Jiekou\biaobai_controller@my_biaobai');
+
+});
+
+//表白 登录
+Route::get('/biaobai/login','Jiekou\biaobai_controller@login');
+//登录时获取code
+Route::get('/biaobai/get_code','Jiekou\biaobai_controller@get_code');
+
+
+
+
