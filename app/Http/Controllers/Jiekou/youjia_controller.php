@@ -9,11 +9,12 @@ use App\Http\Tool\wechat;
 class youjia_controller extends Controller
 {
     public $wechat;
-    public function __construct(wechat $wechat,wechat_biaoqian_controller $wechat_biaoqian_controller)
+    public $redis;
+    public function __construct(Wechat $wechat)
     {
         $this->wechat = $wechat;
-        $this->wechat_biaoqian_controller = $wechat_biaoqian_controller;
-
+        $this->redis = new \Redis();
+        $this->redis->connect('39.107.125.204','6379');
     }
     public function youjia_api()
     {
@@ -23,8 +24,9 @@ class youjia_controller extends Controller
 
     public function youjia_tiaozheng_test()
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1','6379');
+        /*
+//        $this->redis = new \Redis();
+//        $this->redis->connect('127.0.0.1','6379');
 //        dd(1);
 //            return ;
             //业务逻辑
@@ -33,9 +35,9 @@ class youjia_controller extends Controller
 //        dd(1);
             foreach($price_arr['result'] as $v){
 //                dd(1);
-                if($redis->exists($v['city'].'youjia')){
+                if($this->redis->exists($v['city'].'youjia')){
                     $redis_info = json_decode($this->redis->get($v['city'].'youjia'),1);
-//                    dump($redis_info);
+//                    dump($this->redis_info);
                     foreach ($v as $k=>$vv){
                         if($vv != $redis_info[$k]){
                             //推送模板消息
@@ -64,7 +66,35 @@ class youjia_controller extends Controller
                 }
             }
             // })->daily();
+        */
 
+
+        $price_info = file_get_contents('http://www.wenjianliang.top/youjia/api');
+        $price_arr = json_decode($price_info,1);
+        foreach($price_arr['result'] as $v){
+            if($this->redis->exists($v['city'].'youjia')){
+                $redis_info = json_decode($this->redis->get($v['city'].'youjia'),1);
+                foreach ($v as $k=>$vv){
+                    if($vv != $redis_info[$k]){
+                        //推送模板消息
+                        $openid_info = $this->wechat->app->user->list($nextOpenId = null);
+                        $openid_list = $openid_info['data'];
+                        foreach ($openid_list['openid'] as $vo){
+                            $this->wechat->app->template_message->send([
+                                'touser' => $vo,
+                                'template_id' => 'x2mkWXTbj7bR0R3-tCXTdzPWLt9CxEoiaNYY8J06HSY	',
+                                'url' => 'http://www.wenjianliang.top',
+                                'data' => [
+                                    'keyword1' => $v['city'],
+                                    'keyword2' => '该地址的油价发生调整，请细心留意',
+                                ],
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+        dd();
     }
 
 
