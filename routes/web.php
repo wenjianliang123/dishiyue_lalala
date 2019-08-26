@@ -425,5 +425,9 @@ Route::get('/biaobai/login','Jiekou\biaobai_controller@login');
 Route::get('/biaobai/get_code','Jiekou\biaobai_controller@get_code');
 
 
+//油价
+//自己做的假数据接口
+Route::get('/youjia/api','Jiekou\youjia_controller@youjia_api');
+
 
 
