@@ -18,8 +18,8 @@ class biaoqian_guanli_controller extends Controller
     public function biaoqian_list()
     {
         //调用清零接口次数限制
-    //        $re=$this->wechat->empty_api_count();
-    //        dd($re);
+        //        $re=$this->wechat->empty_api_count();
+        //        dd($re);
         //获取access_token
 //        $re=$this->wechat->get_access_token();
 //        dd($re);
@@ -120,8 +120,54 @@ class biaoqian_guanli_controller extends Controller
             $message = '您好!';
             $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
             echo $xml_str;
-        }elseif ($xml['MsgType']=='event'){
+
+
+
+            $preg_result = preg_match('/.*?油价/',$xml['Content']);
+            if($preg_result){
+                //查询油价
+                $city = substr($xml['Content'],0,-6);
+                $price_info = file_get_contents('http://www.dishiyue.com/youjia/api');
+                $price_arr = json_decode($price_info,1);
+                $support_arr = [];
+                foreach($price_arr['result'] as $v){
+                    $support_arr[] = $v['city'];
+                }
+                if(!in_array($city,$support_arr)){
+                    $message = '查询城市不支持！';
+                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+                    echo $xml_str;
+                    die();
+                }
+                foreach($price_arr['result'] as $v){
+                    if($city == $v['city']){
+                        $this->redis->incr($city);
+                        $find_num = $this->redis->get($city);
+                        //缓存操作
+                        if($find_num > 10){
+                            if($this->redis->exists($city.'信息')){
+                                //存在
+                                $v_info = $this->redis->get($city.'信息');
+                                $v = json_decode($v_info,1);
+                            }else{
+                                $this->redis->set($city.'信息',json_encode($v));
+                            }
+                        }
+                        //$message = $city.'目前油价：'."\n";
+                        $message = $city.'目前油价：'."\n".'92h：'.$v['92h']."\n".'95h：'.$v['95h']."\n".'98h：'.$v['98h']."\n".'0h：'.$v['0h'];
+                        $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+                        echo $xml_str;
+                        die();
+                    }
+                }
+            }
+            /*$message = '你好!';
+            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+            echo $xml_str;*/
+
+        }elseif($xml['MsgType']=='event'){
             if($xml['Event']=='subscribe'){
+//                echo 222;die;
                 if(isset($xml['EventKey'])){
                     //拉取新人的操作
 //                    print_r($xml['EventKey']);die();
@@ -136,9 +182,9 @@ class biaoqian_guanli_controller extends Controller
                             'openid'=>$xml['FromUserName'],
                             'add_time'=>time()
                         ]);
-                        echo 'okok';die();
+//                        echo 'okok';die();
                     }else{
-                        echo 11;
+//                        echo 11;
                     }
                 }
                 $message = '关注事件!';
@@ -147,12 +193,19 @@ class biaoqian_guanli_controller extends Controller
                 //老师的表白
             }elseif($xml['Event'] == 'CLICK'){
                 if($xml['EventKey'] == 'my_biaobai'){
-                    $biaobai_info = DB::connection('mysql_cart')->table('biaobai')->where(['from_user'=>$xml['FromUserName']])->get()->toArray();
+//                    dd($xml['FromUserName']);
+                    //此处的打印结果是openid 拿到openid 去查信息 取出名字 放入条件
+                    $nickname=$this->wechat->get_user_info($xml['FromUserName'])['nickname'];
+                    $biaobai_info = DB::connection('mysql_shop')->table('wechat_biaobai')->where(['user_name'=>$nickname])->get()->toArray();
+//                    dd();
+                    $num=count($biaobai_info);
                     $message = '';
-                    foreach($biaobai_info as $v){
-                        $message .= $v->content."\n";
+                    foreach($biaobai_info as $k=>$v){
+                        $message .= intval($k+1).'、'."《《收到》》".$v->push_user.'表白内容：'.$v->biaobai_content."\n";
                     }
-                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['."共收到".$num.'条'."\n".$message.']]></Content></xml>';
+//                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+//                    dump($xml_str);
                     echo $xml_str;
                 }
                 //老师的地理位置 看不懂
