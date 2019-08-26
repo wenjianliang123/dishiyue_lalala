@@ -7,10 +7,12 @@ class wechat{
 
     public  $request;
     public  $client;
+    public  $app;
     public function __construct(Request $request,Client $client)
     {
         $this->request = $request;
         $this->client = $client;
+        $this->app = $app = app('wechat.official_account');
     }
     //测试八月——获取用户信息
     public function get_user_info($open_id)
