@@ -120,42 +120,72 @@ class biaoqian_guanli_controller extends Controller
 //        print_r($xml['MsgType']);die();
 //        \Log::Info(json_encode($xml));
         if($xml['MsgType']=='text'){
+<<<<<<< HEAD
 //            $message = '您好!';
 //            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
 //            echo $xml_str;
 
             //判断是否在查询油价
+=======
+            $message = '您好!';
+            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+            echo $xml_str;
+
+
+
+>>>>>>> da8574d175e8c47c243cabaf54451fa26374af48
             $preg_result = preg_match('/.*?油价/',$xml['Content']);
             if($preg_result){
                 //查询油价
                 $city = substr($xml['Content'],0,-6);
+<<<<<<< HEAD
 //                $price_info = file_get_contents('http://shopdemo.18022480300.com/price/api');
                 $price_info = file_get_contents('http://www.wenjianliang.top/youjia/api');
                 $price_arr = json_decode($price_info,1);
 //                dd($price_arr);
+=======
+                $price_info = file_get_contents('http://www.dishiyue.com/youjia/api');
+                $price_arr = json_decode($price_info,1);
+>>>>>>> da8574d175e8c47c243cabaf54451fa26374af48
                 $support_arr = [];
                 foreach($price_arr['result'] as $v){
                     $support_arr[] = $v['city'];
                 }
                 if(!in_array($city,$support_arr)){
+<<<<<<< HEAD
                     $message = '您所要查询城市不支持！';
+=======
+                    $message = '查询城市不支持！';
+>>>>>>> da8574d175e8c47c243cabaf54451fa26374af48
                     $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
                     echo $xml_str;
                     die();
                 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> da8574d175e8c47c243cabaf54451fa26374af48
                 foreach($price_arr['result'] as $v){
                     if($city == $v['city']){
                         $this->redis->incr($city);
                         $find_num = $this->redis->get($city);
                         //缓存操作
                         if($find_num > 10){
+<<<<<<< HEAD
                             if($this->redis->exists($city.'youjia')){
                                 //存在
                                 $v_info = $this->redis->get($city.'youjia');
                                 $v = json_decode($v_info,1);
                             }else{
                                 $this->redis->set($city.'youjia',json_encode($v));
+=======
+                            if($this->redis->exists($city.'信息')){
+                                //存在
+                                $v_info = $this->redis->get($city.'信息');
+                                $v = json_decode($v_info,1);
+                            }else{
+                                $this->redis->set($city.'信息',json_encode($v));
+>>>>>>> da8574d175e8c47c243cabaf54451fa26374af48
                             }
                         }
                         //$message = $city.'目前油价：'."\n";
@@ -166,7 +196,15 @@ class biaoqian_guanli_controller extends Controller
                     }
                 }
             }
+<<<<<<< HEAD
         }elseif ($xml['MsgType']=='event'){
+=======
+            /*$message = '你好!';
+            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+            echo $xml_str;*/
+
+        }elseif($xml['MsgType']=='event'){
+>>>>>>> da8574d175e8c47c243cabaf54451fa26374af48
             if($xml['Event']=='subscribe'){
 //                echo 222;die;
                 if(isset($xml['EventKey'])){

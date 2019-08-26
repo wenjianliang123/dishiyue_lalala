@@ -15,6 +15,37 @@ class youjia_controller extends Controller
 
     public function youjia_tiaozheng_test()
     {
+        $redis = new \Redis();
+        $redis->connect('39.107.125.204','6379');
+
+            return ;
+            //业务逻辑
+            $price_info = file_get_contents('http://www.wenjianliang.top/youjia/api');
+            $price_arr = json_decode($price_info,1);
+            foreach($price_arr['result'] as $v){
+                if($redis->exists($v['city'].'youjia')){
+                    $redis_info = json_decode($this->redis->get($v['city'].'youjia'),1);
+                    foreach ($v as $k=>$vv){
+                        if($vv != $redis_info[$k]){
+                            //推送模板消息
+                            $openid_info = $wechat->app->user->list($nextOpenId = null);
+                            $openid_list = $openid_info['data'];
+                            foreach ($openid_list['openid'] as $vo){
+                                $wechat->app->template_message->send([
+                                    'touser' => $vo,
+                                    'template_id' => '',
+                                    'url' => 'http://www.wenjianliang.top',
+                                    'data' => [
+                                        'first' => $v['city'],
+                                        'keyword1' => '该地址的油价发生调整,请细心留意',
+                                    ],
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+            // })->daily();
 
     }
 
