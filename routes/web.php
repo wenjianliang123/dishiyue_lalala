@@ -434,6 +434,6 @@ Route::get('/biaobai/get_code','Jiekou\biaobai_controller@get_code');
 //自己做的假数据接口
 Route::get('/youjia/api','Jiekou\youjia_controller@youjia_api');
 //油价调整测试
-Route::get('/youjia/youjia_tiaozheng_test','Jiekou\youjia_controller@youjia_tiaozheng_test');
+Route::any('/youjia/youjia_tiaozheng_test','Jiekou\youjia_controller@youjia_tiaozheng_test');
 
 
