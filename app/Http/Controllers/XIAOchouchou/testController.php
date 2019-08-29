@@ -25,4 +25,10 @@ class testController extends Controller
         return $access_token;
 
     }
+
+    public function add()
+    {
+        echo 111;
+        return view('admin/fenxiao/user_list');
+    }
 }

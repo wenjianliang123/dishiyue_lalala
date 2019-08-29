@@ -117,9 +117,9 @@ class biaoqian_guanli_controller extends Controller
 //        print_r($xml['MsgType']);die();
 //        \Log::Info(json_encode($xml));
         if($xml['MsgType']=='text'){
-            $message = '您好!';
-            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
-            echo $xml_str;
+//            $message = '您好!';
+//            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+//            echo $xml_str;
 
 
 

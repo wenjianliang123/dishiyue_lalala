@@ -19,7 +19,7 @@ class CustomMenuController extends Controller
     //菜单添加页面
     public function menu_add()
     {
-        return view('wechat/custom_menu/menu_ardd');
+        return view('wechat/custom_menu/menu_add');
     }
 
     //菜单添加执行页面
