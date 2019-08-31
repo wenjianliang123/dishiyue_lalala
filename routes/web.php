@@ -437,3 +437,21 @@ Route::get('/youjia/api','Jiekou\youjia_controller@youjia_api');
 Route::any('/youjia/youjia_tiaozheng_test','Jiekou\youjia_controller@youjia_tiaozheng_test');
 
 
+
+/**
+ *  八月——月考——课程管理
+ */
+
+//课程登录
+Route::get('/kecheng/login','Yuekao\kecheng_controller@login');
+//获取code
+Route::get('/kecheng/get_code','Yuekao\kecheng_controller@get_code');
+
+//课程
+Route::group(['middleware' => ['check_login_wechat_kecheng'],'prefix'=>'/kecheng'], function () {
+    //管理课程
+    Route::get('/kecheng_guanli_view','Yuekao\kecheng_controller@kecheng_guanli_view');
+    //执行添加
+    Route::post('/kecheng_guanli_view_do_add','Yuekao\kecheng_controller@kecheng_guanli_view_do_add');
+
+});

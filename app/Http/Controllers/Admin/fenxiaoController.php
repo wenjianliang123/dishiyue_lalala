@@ -19,6 +19,8 @@ class fenxiaoController extends Controller
      */
     public function user_list()
     {
+        //非静默授权获取用户信息 （可有可无）
+        $feijingmo_shouquan_get_user_info = $this->wechat->feijingmo_shouquan_get_user_info();
         $user_info = DB::connection('mysql_shop')->table('user_wechat')->get();
 //        dd($user_info);
         $jsconfig = [

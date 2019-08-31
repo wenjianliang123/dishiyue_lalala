@@ -105,7 +105,7 @@ class biaoqian_guanli_controller extends Controller
             Content	文本消息内容
             MsgId	消息id，64位整型
         */
-    public function jiekou_peizhi_url() //固定信息好像写一遍就可以一直使用 不用在postman中重复给值
+    public function jiekou_peizhi_url() //固定youjia好像写一遍就可以一直使用 不用在postman中重复给值
     {
         // （只能用于线上）第一次无法配置成功使用以下两行代码
 //        echo $_GET['echostr'];
@@ -118,75 +118,157 @@ class biaoqian_guanli_controller extends Controller
         //解析XML LIBXML_NOCDATA - 将 CDATA 设置为文本节点 传过来的数据中带有CDATA样式的前缀 将其设为文本节点
         //将一个XML字符串装载入一个对象中
 //        dd($data);
-        $xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);        //将 xml字符串 转换成对象
+        $xml = simplexml_load_string($data,'SimpleXMLElement', LIBXML_NOCDATA);        //将 xml字符串 转换成对象
         $xml = (array)$xml; //转化成数组
         //写入日志
-        $log_str = date('Y-m-d H:i:s') . "\n" . $data . "\n" . '<<<<<<<';
+        $log_str = date('Y-m-d H:i:s') . "\n" . $data . "\n".'<<<<<<<';
 //      //file_put_contents — 将一个字符串写入文件 和依次调用 fopen()，fwrite() 以及 fclose() 功能一样。
 //        FILE_APPEND	如果文件 filename 已经存在，追加数据而不是覆盖。
-        file_put_contents(storage_path('logs/Receive_normal_messages.log'), $log_str, FILE_APPEND);
+        file_put_contents(storage_path('logs/Receive_normal_messages.log'),$log_str,FILE_APPEND);
 //        print_r($xml['MsgType']);die();
 //        \Log::Info(json_encode($xml));
-        if ($xml['MsgType'] == 'text') {
-
-            $preg_str = preg_match('/.*?天气/', $xml['Content']);
-            //判断是否在查询油价
-            $preg_result = preg_match('/.*?油价/', $xml['Content']);
-            if ($preg_result) {
+        if($xml['MsgType']=='text'){
+//            $message = '您好!';
+//            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+//            echo $xml_str;
+            $preg_result = preg_match('/.*?油价/',$xml['Content']);
+//            dd($preg_result);
+            if($preg_result){
                 //查询油价
-                $city = substr($xml['Content'], 0, -6);
-
-//                $price_info = file_get_contents('http://shopdemo.18022480300.com/price/api');
+                $city = substr($xml['Content'],0,-6);
                 $price_info = file_get_contents('http://www.wenjianliang.top/youjia/api');
-                $price_arr = json_decode($price_info, 1);
+                $price_arr = json_decode($price_info,1);
 //                dd($price_arr);
-
                 $support_arr = [];
-                foreach ($price_arr['result'] as $v) {
+                foreach($price_arr['result'] as $v){
                     $support_arr[] = $v['city'];
                 }
-                if (!in_array($city,$support_arr)) {
-
-                    $message = '您所要查询城市不支持！';
-                    $xml_str = '<xml><ToUserName><![CDATA[' . $xml['FromUserName'] . ']]></ToUserName><FromUserName><![CDATA[' . $xml['ToUserName'] . ']]></FromUserName><CreateTime>' . time() . '</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[' . $message . ']]></Content></xml>';
+                if(!in_array($city,$support_arr)){
+                    $message = '查询城市不支持！';
+                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
                     echo $xml_str;
                     die();
                 }
-                foreach ($price_arr['result'] as $v) {
-                    if ($city == $v['city']) {
+                foreach($price_arr['result'] as $v){
+                    if($city == $v['city']){
                         $this->redis->incr($city);
                         $find_num = $this->redis->get($city);
                         //缓存操作
-                        if ($find_num>1) {
-                            if ($this->redis->exists($city."youjia")) {
+                        if($find_num >1){
+                            if($this->redis->exists($city.'youjia')){
                                 //存在
-//                                dump('进入获取redis了');die();
-                                $v_info =$this->redis->get($city."youjia");
-//                                dump($v_info."123");die();
-//                                $v_info=json_encode($v_info);
-//                                dd($v_info);
+                                $v_info = $this->redis->get($city.'youjia');
                                 $v = json_decode($v_info,1);
-//                                dump($v);die();
-//                                dd('获取中');
-                            } else {
-//                                dump('进入设置redis了');die();
-                                $this->redis->set($city."youjia",json_encode($v));
+                            }else{
+                                $this->redis->set($city.'youjia',json_encode($v),300);
                             }
                         }
                         //$message = $city.'目前油价：'."\n";
-                        $message = $city .'目前油价：'."\n".'92h：'.$v['92h']."\n".'95h：'.$v['95h']."\n".'98h：'.$v['98h']."\n".'0h：'.$v['0h'];
-                        $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'] . ']]></ToUserName><FromUserName><![CDATA[' . $xml['ToUserName'] . ']]></FromUserName><CreateTime>' . time() . '</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+                        $message = $city.'目前油价：'."\n".'92h：'.$v['92h']."\n".'95h：'.$v['95h']."\n".'98h：'.$v['98h']."\n".'0h：'.$v['0h'];
+                        $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
                         echo $xml_str;
                         die();
                     }
                 }
-            }elseif ($preg_str){
-                $message = '嘘~，天机不可泄漏!';
-                $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'] . ']]></ToUserName><FromUserName><![CDATA[' . $xml['ToUserName'] . ']]></FromUserName><CreateTime>' . time() . '</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[' . $message . ']]></Content></xml>';
+            }
+            /*$message = '你好!';
+            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+            echo $xml_str;*/
+        }elseif($xml['MsgType']=='event'){
+            if($xml['Event']=='subscribe'){
+//                echo 222;die;
+
+                /*if(isset($xml['EventKey'])){
+                    //拉取新人的操作
+//                    print_r($xml['EventKey']);die();
+                    $agent_code=$xml['EventKey'];
+//                    echo $agent_code;die();//10
+                    $agent_code = explode('_',$agent_code)[1];
+//                    echo $agent_code;die();
+                    $agent_info = DB::connection('mysql_shop')->table('user_agent')->where(['user_id'=>$agent_code,'openid'=>$xml['FromUserName']])->first();
+                    if(empty($agent_info)){
+                        DB::connection('mysql_shop')->table('user_agent')->insert([
+                            'user_id'=>$agent_code,
+                            'openid'=>$xml['FromUserName'],
+                            'add_time'=>time()
+                        ]);
+//                        echo 'okok';die();
+                    }else{
+//                        echo 11;
+                    }
+                }*/
+                $open_id=$xml['FromUserName'];
+                $user_info=$this->wechat->get_user_info($open_id);
+//                dd($user_info);
+                $user_name=$user_info['nickname'];
+                $us=DB::connection('mysql_shop')->table('user_wechat')->insert([
+                    'name'=>$user_name,
+                    'state'=>1,
+                    'register_time'=>time(),
+                    'password'=>''
+                ]);
+//                dd($open_id);
+//                $open_id=implode('',$open_id);
+                $huanying="欢迎";
+                $jiewei="进入选课系统";
+                $message = $huanying.$user_name.$jiewei;
+                $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
                 echo $xml_str;
-            }else{
-                $message = '您好!';
-                $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'] . ']]></ToUserName><FromUserName><![CDATA[' . $xml['ToUserName'] . ']]></FromUserName><CreateTime>' . time() . '</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[' . $message . ']]></Content></xml>';
+                //表白 -无故会出现故障 或者无反应
+            }elseif($xml['Event'] == 'CLICK'){
+                if($xml['EventKey'] == 'my_biaobai'){
+                    $open_id=$xml['FromUserName'];
+                    //此处的打印结果是openid 拿到openid 去查youjia 取出名字 放入条件
+//                    dd($open_id);
+                    $nickname_info=$this->wechat->get_user_info($open_id);
+//                    dd($nickname_info);
+                    $nickname_1=$nickname_info['nickname'];
+//                    dd($nickname_1);
+                    $biaobai_info = DB::connection('mysql_shop')->table('wechat_biaobai')->where(['user_name'=>$nickname_1])->get()->toArray();
+//                    dd($biaobai_info);
+                    $num=count($biaobai_info);
+//                    dd($num);
+                    $message = '';
+                    foreach($biaobai_info as $k=>$v){
+                        $message .= intval($k+1).'、'."《《收到》》".$v->push_user.'表白内容：'.$v->biaobai_content."\n";
+                    }
+                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['."共收到".$num.'条'."\n".$message.']]></Content></xml>';
+//                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+//                    dump($xml_str);
+                    echo $xml_str;
+                }elseif ($xml['EventKey'] == 'my_kecheng'){
+                    $user_name=session('kecheng_user_name');
+                    $panduan_kecheng=DB::connection('mysql_shop')->table('bayue_yuekao_kecheng')->where('user_name',$user_name)->get()->toarray();
+
+                        //已经有课程
+                        $open_id=$xml['FromUserName'];
+                        //此处的打印结果是openid 拿到openid 去查youjia 取出名字 放入条件
+//                    dd($open_id);
+                        $nickname_info=$this->wechat->get_user_info($open_id);
+//                    dd($nickname_info);
+                        $nickname_1=$nickname_info['nickname'];
+//                    dd($nickname_1);
+                        $kecheng_info = DB::connection('mysql_shop')->table('bayue_yuekao_kecheng')->where(['user_name'=>$nickname_1])->orderBy('kecheng_id','desc')->first();
+//                    dd($biaobai_info);
+                        $kecheng_info=json_decode(json_encode($kecheng_info),1);
+                        $tishi="你好,".$this->wechat->get_user_info($xml['FromUserName'])['nickname']."同学，你当前的课程安排如下";
+//                    dd($kecheng_info);
+//                    $message = '';
+
+                        $message ="第一节".$kecheng_info['kecheng_1']."\n"."第二节".$kecheng_info['kecheng_2']."\n"."第三节".$kecheng_info['kecheng_3']."\n"."第四节".$kecheng_info['kecheng_4']."\n";
+
+                        $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$tishi."\n".$message.']]></Content></xml>';
+//                    $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
+//                    dump($xml_str);
+                        echo $xml_str;
+
+
+                }
+                //老师的地理位置 看不懂
+            }elseif($xml['Event'] == 'location_select') {
+                $message = $xml['SendLocationInfo']->Label;
+                \Log::Info($message);
+                $xml_str = '<xml><ToUserName><![CDATA[otAUQ1UtX-nKATwQMq5euKLME2fg]]></ToUserName><FromUserName><![CDATA[' . $xml['ToUserName'] . ']]></FromUserName><CreateTime>' . time() . '</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[' . $message . ']]></Content></xml>';
                 echo $xml_str;
             }
         }
