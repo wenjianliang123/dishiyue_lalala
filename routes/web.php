@@ -18,7 +18,8 @@ Route::get('/', function () {
 
 /**
  * 商品管理 图片上传
- */  
+ */
+
 Route::prefix('/admin/goods/')->group(function() {
     Route::get('/add','Admin\goodsController@add');
     Route::post('/do_add','Admin\goodsController@do_add');
@@ -39,13 +40,13 @@ Route::group(['middleware' => ['login'],'prefix'=>'/admin/student/'], function (
      * 学生管理
      *  curd、多条件搜索+分页、表单验证、两表联查、下拉框默认、单选框默认
      */
-        Route::get('add','Admin\studentController@add');
-        Route::get('do_add','Admin\studentController@do_add');
-        Route::get('index','Admin\studentController@index');
-        Route::get('edit/{id}','Admin\studentController@edit');
-        Route::get('update','Admin\studentController@update');
-        Route::get('delete/{id}','Admin\studentController@delete');
 
+    Route::get('add','Admin\studentController@add');
+    Route::get('do_add','Admin\studentController@do_add');
+    Route::get('index','Admin\studentController@index');
+    Route::get('edit/{id}','Admin\studentController@edit');
+    Route::get('update','Admin\studentController@update');
+    Route::get('delete/{id}','Admin\studentController@delete');
 });
 
 /**
@@ -152,14 +153,16 @@ Route::group(['middleware' => ['login'],'prefix'=>'/admin/diaoyan/'], function (
  * 竞猜 -kezhi yang
  */
 
-    Route::get('kaoshi/add','Admin\jingcaiController@add');
-    Route::post('kaoshi/doadd','Admin\jingcaiController@doadd');
-    Route::any('kaoshi/index','Admin\jingcaiController@index');
-    Route::get('kaoshi/guess','Admin\jingcaiController@guess');
-    Route::get('kaoshi/goguess','Admin\jingcaiController@goguess');
-    Route::any('kaoshi/q','Admin\jingcaiController@doguess');
-    Route::post('kaoshi/result','Admin\jingcaiController@result');
-    Route::get('kaoshi/results','Admin\jingcaiController@results');
+
+Route::get('kaoshi/add','Admin\jingcaiController@add');
+Route::post('kaoshi/doadd','Admin\jingcaiController@doadd');
+Route::any('kaoshi/index','Admin\jingcaiController@index');
+Route::get('kaoshi/guess','Admin\jingcaiController@guess');
+Route::get('kaoshi/goguess','Admin\jingcaiController@goguess');
+Route::any('kaoshi/q','Admin\jingcaiController@doguess');
+Route::post('kaoshi/result','Admin\jingcaiController@result');
+Route::get('kaoshi/results','Admin\jingcaiController@results');
+
 
 /**
  * 竞猜 （除了比赛结果的后台添加和验证两只球队不能一样都做了） -wen jianliang
@@ -201,7 +204,9 @@ Route::group(['middleware' => ['chekuLogin'],'prefix'=>'/admin/cheku/'], functio
 });
 /**
  * 接口 --七月
-*/
+<<<<<<< HEAD
+ */
+
 Route::get('jiekou/index','Admin\jiekouController@index');
 Route::post('/zhifubao/pay','PayController@do_pay');
 
@@ -429,7 +434,19 @@ Route::get('/biaobai/get_code','Jiekou\biaobai_controller@get_code');
 //自己做的假数据接口
 Route::get('/youjia/api','Jiekou\youjia_controller@youjia_api');
 //油价调整测试
-Route::get('/youjia/youjia_tiaozheng_test','Jiekou\youjia_controller@youjia_tiaozheng_test');
+Route::any('/youjia/youjia_tiaozheng_test','Jiekou\youjia_controller@youjia_tiaozheng_test');
+
+
+
+/**
+ *  八月——月考——课程管理
+ */
+
+//课程登录
+Route::get('/kecheng/login','Yuekao\kecheng_controller@login');
+//获取code
+Route::get('/kecheng/get_code','Yuekao\kecheng_controller@get_code');
+
 
 /**
  * 2019-08-31月份 第九月 基础练习 学生管理
@@ -455,4 +472,13 @@ Route::group(['middleware' => ['check_login_jiuyue_student'],'prefix'=>'/jiuyue/
     Route::post('/student_update','Dijiuyue\student_controller@update');
 //学生删除
     Route::get('/student_delete/{id}','Dijiuyue\student_controller@delete');
+
 });
+
+//课程
+Route::group(['middleware' => ['check_login_wechat_kecheng'],'prefix'=>'/kecheng'], function () {
+    //管理课程
+    Route::get('/kecheng_guanli_view','Yuekao\kecheng_controller@kecheng_guanli_view');
+    //执行添加
+    Route::post('/kecheng_guanli_view_do_add','Yuekao\kecheng_controller@kecheng_guanli_view_do_add');
+

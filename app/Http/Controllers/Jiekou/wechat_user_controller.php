@@ -112,7 +112,7 @@ class wechat_user_controller extends Controller
     {
         //首先去配置域名-》测试号->网页帐号	网页授权获取用户基本信息	无上限	修改不要加http等东西 一开始就需要
 //        $user_is_empty=DB::connection('mysql_shop')->table('wechat_user')->where('open_id',$openid)->get()->toArray();
-        $redirect_uri='http://www.dishiyue.com/wechat/get_code';
+        $redirect_uri='http://www.wenjianliang.top/wechat/get_code';
         $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=".env('WECHAT_APPID')."&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
         header('Location:'.$url);
     }
@@ -158,7 +158,9 @@ class wechat_user_controller extends Controller
             $user_wechat_info=DB::connection('mysql_shop')->table("user_wechat")->where(['id'=>$wechat_user_info['user_id']])->first();
 //            dd($request->session()->put('username',$user_wechat_info->name));
 //            dd($user_wechat_info->name);
-            session(['wechat_user_name' =>$user_wechat_info->name]);
+//            dd($user_wechat_info);
+            $user_wechat_info=json_decode(json_encode($user_wechat_info),1);
+            session(['wechat_user_name' =>$user_wechat_info['name']]);
             $template_id="JvdX4By15TD56N8Z-kS3XWRcVt2EeO9Bh98wKgCvldQ";
             $this->wechat->push_moban_info($openid,$template_id);
 //            dd(session('wechat_user_name'));

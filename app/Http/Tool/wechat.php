@@ -34,7 +34,6 @@ class wechat{
         $access_token_key='wechat_access_token';
         $redis=new \Redis();
         $redis->connect('127.0.0.1','6379');
-
         //在方法中判断key
         if($redis->exists($access_token_key))
         {
@@ -57,7 +56,7 @@ class wechat{
     }
 
     /**
-     * 获取JS-SDK中的jsapi_ticket
+     * 获取JS-SDK中的jsapi_ticket 用于签名
      */
     public function get_jsapi_ticket()
     {
@@ -108,7 +107,7 @@ class wechat{
         return $output;
     }
 
-    //推送
+    //推送模板信息
     public function push_moban_info($open_id,$template_id='yCYPfV_udZC5TM-U_GhCTUgfmQbefMOlGxS-4VfnkxI',$push_user='',$liuyan_content='')
     {
         $url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token='.$this->get_access_token();
@@ -229,6 +228,42 @@ class wechat{
         $re=$this->post($url,json_encode($data));
         dd($re);
 
+    }
+
+    //非静默授权获取用户信息
+    public static function feijingmo_shouquan_get_user_info()
+    {
+        $openid=session('openid');
+        if($openid){
+            return $openid;
+        }
+        $code=request()->get('code');
+        if($code){
+            $appid="wxd6f4a5c8c232913a";
+            $secret="962723e3a8f31ff2102bed4dfbefceac";
+            $url="https://api.weixin.qq.com/sns/oauth2/access_token?appid=$appid&secret=$secret&code=$code&grant_type=authorization_code";
+            $re = file_get_contents($url);
+            $re=json_decode($re,true);
+        // dd($re);
+            $access_token=$re['access_token'];
+// dd($access_token);
+            $openid=$re['openid'];
+// dd($openid);
+            $url="https://api.weixin.qq.com/sns/userinfo?access_token=$access_token&openid=$openid&lang=zh_CN";
+// dd($url);
+            $info=file_get_contents($url);
+            $info=json_decode($info,true);
+// dd($info);
+            session(['openid'=>$info]);
+        }else{
+            $host=$_SERVER['HTTP_HOST'];
+            $uri=$_SERVER['REQUEST_URI'];
+            $appid="wxd6f4a5c8c232913a";
+            $redirect_uri=urlencode("http://".$host.$uri);
+            $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=$appid&redirect_uri=$redirect_uri&response_type=code&scope=snsapi_userinfo&state=111#wechat_redirect";
+            header("location:".$url);die;
+        }
+        return $info;
     }
 
 

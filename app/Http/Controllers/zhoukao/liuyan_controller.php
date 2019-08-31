@@ -199,7 +199,7 @@ class liuyan_controller extends Controller
     {
         $pull_openid=$request->all()['pull_openid'];
 //        dd($pull_openid);
-        $data=DB::connection('mysql_shop')->table('wechat_liuyan')->where('open_id',$pull_openid)->orderBy('liuyan_id','desc')->first();
+        $data=DB::connection('mysql_shop')->table('wechat_liuyan')->where('open_id',$pull_openid)->orderBy('liuyan_id','desc')->get();
 //        $data=array_map('get_object_vars',$data);
         $data=json_decode(json_encode($data),1);
 //        dd($data);

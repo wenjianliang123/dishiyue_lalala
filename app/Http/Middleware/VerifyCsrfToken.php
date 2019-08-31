@@ -20,6 +20,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //去除csrf验证的路由
-        'ceshijiekou','admin/jiekou_peizhi_url'
+        'ceshijiekou','admin/jiekou_peizhi_url','youjia/youjia_tiaozheng_test'
     ];
 }
