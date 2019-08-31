@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'checkLogin_xinwen' => \App\Http\Middleware\checkLogin_xinwen::class,
         'check_login_wechat_liuyan' => \App\Http\Middleware\check_login_wechat_liuyan::class,
         'check_login_wechat_biaobai' => \App\Http\Middleware\check_login_wechat_biaobai::class,
+        'check_login_jiuyue_student' => \App\Http\Middleware\check_login_jiuyue_student::class,
     ];
 
     /**

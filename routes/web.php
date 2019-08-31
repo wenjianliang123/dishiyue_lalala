@@ -431,4 +431,28 @@ Route::get('/youjia/api','Jiekou\youjia_controller@youjia_api');
 //油价调整测试
 Route::get('/youjia/youjia_tiaozheng_test','Jiekou\youjia_controller@youjia_tiaozheng_test');
 
+/**
+ * 2019-08-31月份 第九月 基础练习 学生管理
+ */
+//九月 基础测试——学生
+// wechat 网页授权
+//登陆
+Route::get('/jiuyue/student/login','Dijiuyue\student_controller@login');
+//获取code
+Route::get('/jiuyue/student/get_code','Dijiuyue\student_controller@get_code');
 
+////
+Route::group(['middleware' => ['check_login_jiuyue_student'],'prefix'=>'/jiuyue/student'], function () {
+//学生添加 页面
+    Route::get('/student_add_view','Dijiuyue\student_controller@student_add_view');
+//执行添加
+    Route::post('/student_do_add','Dijiuyue\student_controller@student_do_add');
+//学生列表
+    Route::get('/student_list','Dijiuyue\student_controller@index');
+//学生修改视图
+    Route::get('/student_edit/{id}','Dijiuyue\student_controller@edit');
+//执行修改
+    Route::post('/student_update','Dijiuyue\student_controller@update');
+//学生删除
+    Route::get('/student_delete/{id}','Dijiuyue\student_controller@delete');
+});
