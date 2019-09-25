@@ -93,9 +93,12 @@ class wechat{
         //发送什么数据
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         //忽略证书
+//        FALSE 禁止 cURL 验证对等证书（peer's certificate）。
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        //	设置为 1 是检查服务器SSL证书中是否存在一个公用名(common name)。
+//          设置成 2，会检查公用名是否存在，并且是否与提供的主机名匹配。 0 为不检查名称
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        //忽略header头信息
+        //忽略header头信息 	启用时会将头文件的信息作为数据流输出。
         curl_setopt($ch, CURLOPT_HEADER, 0);
         //设置超时时间
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);

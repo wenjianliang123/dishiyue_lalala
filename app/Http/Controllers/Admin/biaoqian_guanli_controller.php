@@ -131,12 +131,7 @@ class biaoqian_guanli_controller extends Controller
 //            $message = '您好!';
 //            $xml_str = '<xml><ToUserName><![CDATA['.$xml['FromUserName'].']]></ToUserName><FromUserName><![CDATA['.$xml['ToUserName'].']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['.$message.']]></Content></xml>';
 //            echo $xml_str;
-<<<<<<< HEAD
 
-
-
-=======
->>>>>>> 771ce77e5b52e8aba9320d3502e086049c634cfc
             $preg_result = preg_match('/.*?油价/',$xml['Content']);
 //            dd($preg_result);
             if($preg_result){

@@ -478,7 +478,13 @@ Route::group(['middleware' => ['check_login_jiuyue_student'],'prefix'=>'/jiuyue/
 //课程
 Route::group(['middleware' => ['check_login_wechat_kecheng'],'prefix'=>'/kecheng'], function () {
     //管理课程
-    Route::get('/kecheng_guanli_view','Yuekao\kecheng_controller@kecheng_guanli_view');
+    Route::get('/kecheng_guanli_view', 'Yuekao\kecheng_controller@kecheng_guanli_view');
     //执行添加
-    Route::post('/kecheng_guanli_view_do_add','Yuekao\kecheng_controller@kecheng_guanli_view_do_add');
+    Route::post('/kecheng_guanli_view_do_add', 'Yuekao\kecheng_controller@kecheng_guanli_view_do_add');
+
+});
+
+
+// 八月——月考——签到
+Route::get('/qiandao/index','Dijiuyue\qiandao_controller@index');
 
